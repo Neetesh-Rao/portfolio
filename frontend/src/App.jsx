@@ -36,6 +36,8 @@ import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
 import headerimage from '../public/profile.jpeg'
 import bitmax from '../public/ChatGPT Image Mar 2, 2026, 05_10_42 PM.png'
 import wandarlust from '../public/wandarlust.png'
+import resume from '../public/Resume_Neetesh.pdf'
+
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -794,7 +796,7 @@ useEffect(() => {
         {/* Resume Viewer */}
         <div className="p-4">
           <iframe
-            src="/Resume_Neetesh.pdf"
+            src={resume}
             title="Resume Preview"
             className="w-full h-[70vh] rounded-xl border border-white/10 dark:border-gray-700"
           />
@@ -811,7 +813,7 @@ useEffect(() => {
 
           <a
             href="/Resume_Neetesh.pdf"
-            download="Resume_Neetesh.pdf"
+            download={resume}
             className="px-6 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-transform text-white font-medium flex items-center"
           >
             <FaDownload className="mr-2" /> Download
