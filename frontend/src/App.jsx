@@ -16,7 +16,8 @@ import {
   FaGitAlt,
   FaExternalLinkAlt, 
   FaHeart, 
-  FaStar 
+  FaStar ,
+   FaTimes
 } from 'react-icons/fa';
 
 import { 
@@ -33,6 +34,9 @@ import {
 import { HiMenu, HiX, HiChip } from 'react-icons/hi';
 import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
 import headerimage from '../public/profile.jpeg'
+import bitmax from '../public/ChatGPT Image Mar 2, 2026, 05_10_42 PM.png'
+import wandarlust from '../public/wandarlust.png'
+
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -104,7 +108,7 @@ function App() {
       id: 1,
       title: "WandarLust",
       description: "Come and AirBnb your property and get great value!",
-      image: "\ChatGPT Image Mar 2, 2026, 05_27_51 PM.png",
+image:wandarlust,
       tech: ["MERN", "Maps API", "Analytics"],
       features: ["Room Booking", "Payment Gateway", "Reviews"],
       github: "#",
@@ -221,6 +225,23 @@ const [isResumeOpen, setIsResumeOpen] = useState(false);
 
 const openResume = () => setIsResumeOpen(true);
 const closeResume = () => setIsResumeOpen(false);
+useEffect(() => {
+  const handleEsc = (e) => {
+    if (e.key === "Escape") {
+      closeResume();
+    }
+  };
+
+  if (isResumeOpen) {
+    document.addEventListener("keydown", handleEsc);
+    document.body.style.overflow = "hidden"; // lock scroll
+  }
+
+  return () => {
+    document.removeEventListener("keydown", handleEsc);
+    document.body.style.overflow = "auto";
+  };
+}, [isResumeOpen]);
   return (
 <>
     <Toaster position="top-right" reverseOrder={false} />
@@ -433,7 +454,7 @@ const closeResume = () => setIsResumeOpen(false);
       <div className="relative group">
         <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400 rounded-2xl blur-2xl opacity-30"></div>
         <img
-          src="\ChatGPT Image Mar 2, 2026, 05_10_42 PM.png"
+          src={bitmax}
           alt="Neetesh Coding"
           className="relative rounded-2xl shadow-2xl"
         />
@@ -739,38 +760,61 @@ const closeResume = () => setIsResumeOpen(false);
     {/* Resume Modal */}
 {isResumeOpen && (
   <>
-    {/* Background Overlay */}
+    {/* Overlay */}
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
       onClick={closeResume}
-    ></div>
+      className="fixed inset-0 bg-black/60 backdrop-blur-md z-40 transition-opacity duration-300"
+    />
 
-    {/* Modal Content */}
-    <div className="fixed inset-0 flex justify-center items-center z-50">
-      <div className="bg-gray-900/90 dark:bg-gray-100/90 backdrop-blur-xl p-6 rounded-2xl w-11/12 md:w-3/4 lg:w-2/3 max-h-[90vh] overflow-y-auto relative">
-        
-        {/* Close Button */}
-        <button
-          onClick={closeResume}
-          className="absolute top-4 right-4 text-gray-400 hover:text-indigo-400 transition-colors"
-        >
-          <FaTimes size={20} />
-        </button>
+    {/* Modal Wrapper */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="relative w-full md:w-4/5 lg:w-3/5 max-h-[92vh] 
+        bg-white/10 dark:bg-black/40 
+        backdrop-blur-2xl 
+        border border-white/20 dark:border-white/10
+        rounded-3xl 
+        shadow-2xl 
+        animate-[fadeInScale_.3s_ease-out]"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
+          <h2 className="text-lg md:text-xl font-semibold text-white dark:text-gray-100">
+            Resume Preview
+          </h2>
 
-        {/* Resume Preview */}
-        <iframe
-          src="/Resume_Neetesh.pdf"
-          className="w-full h-[80vh] rounded-lg border border-gray-700 dark:border-gray-300"
-        ></iframe>
+          <button
+            onClick={closeResume}
+            className="p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 transition-all duration-200"
+          >
+            <FaTimes size={18} />
+          </button>
+        </div>
 
-        {/* Download Button */}
-        <div className="flex justify-center mt-4">
+        {/* Resume Viewer */}
+        <div className="p-4">
+          <iframe
+            src="/Resume_Neetesh.pdf"
+            title="Resume Preview"
+            className="w-full h-[70vh] rounded-xl border border-white/10 dark:border-gray-700"
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-4 px-6 py-4 border-t border-white/10">
+          <button
+            onClick={closeResume}
+            className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition"
+          >
+            Close
+          </button>
+
           <a
             href="/Resume_Neetesh.pdf"
             download="Resume_Neetesh.pdf"
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white font-semibold flex items-center"
+            className="px-6 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-transform text-white font-medium flex items-center"
           >
-            <FaDownload className="mr-2" /> Download Resume
+            <FaDownload className="mr-2" /> Download
           </a>
         </div>
       </div>
