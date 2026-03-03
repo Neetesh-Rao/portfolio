@@ -32,7 +32,7 @@ import {
 } from 'react-icons/si';
 import { HiMenu, HiX, HiChip } from 'react-icons/hi';
 import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
-
+import headerimage from '../public/profile.jpeg'
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -327,7 +327,7 @@ const closeResume = () => setIsResumeOpen(false);
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 rounded-full blur-2xl opacity-50 animate-pulse"></div>
         <div className="relative w-40 h-40 mx-auto rounded-full border-4 border-gray-800 dark:border-gray-300 overflow-hidden">
           <img
-            src="/profile.jpeg"
+            src={headerimage}
             alt="Neetesh"
             className="w-full h-full object-cover"
           />
