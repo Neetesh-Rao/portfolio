@@ -8,9 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+app.get('/',(req,res)=>{
+  res.send('hello')
+})
+
 // Route for sending email
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
+  
 
   try {
     const transporter = nodemailer.createTransport({
