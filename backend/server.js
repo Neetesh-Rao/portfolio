@@ -50,55 +50,26 @@
 
 // app.listen(5000, () => {
 //   console.log("Server running on http://localhost:5000");
-// });
-const express = require("express");
+// }); const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
 
-// ✅ IMPORTANT: Render dynamic port use karta hai
-const PORT = process.env.PORT || 5000;
-
-// ✅ CORS - apna vercel domain daalo yaha
-app.use(
-  cors({
-    origin: "https://your-vercel-app.vercel.app", 
-    methods: ["POST", "GET"],
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 
+// Health check route
 app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
+  res.status(200).send("Server is running 🚀");
 });
 
-// ✅ Create transporter outside route (better practice)
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587, // ✅ 587 use karo
-  secure: false, // true mat karo
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Optional: SMTP verify (debug ke liye useful)
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log("SMTP Error:", error);
-  } else {
-    console.log("SMTP Server is ready to send messages");
-  }
-});
-
-// Route for sending email
+// Send Email Route
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
 
+  // Basic validation
   if (!name || !email || !message) {
     return res.status(400).json({
       success: false,
@@ -107,16 +78,38 @@ app.post("/send-email", async (req, res) => {
   }
 
   try {
+    // Create transporter (Render compatible)
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587, // ✅ Use 587
+      secure: false, // TLS
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // Gmail App Password
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // Verify connection
+    await transporter.verify();
+
     const mailOptions = {
-      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`, // ✅ safer
+      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`, // Don't use user email here
       to: process.env.EMAIL_USER,
-      replyTo: email, // ✅ user email yaha daalo
-      subject: `Portfolio Message from ${name}`,
+      replyTo: email, // So you can reply directly
+      subject: `New Portfolio Message from ${name}`,
       html: `
-        <h3>New Contact Message</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong> ${message}</p>
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2>📩 New Contact Message</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p style="background:#f4f4f4;padding:10px;border-radius:5px;">
+            ${message}
+          </p>
+        </div>
       `,
     };
 
@@ -124,16 +117,22 @@ app.post("/send-email", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Email sent successfully 🚀",
+      message: "Email sent successfully ✅",
     });
+
   } catch (error) {
-    console.error("Mail Error:", error);
+    console.error("Email Error:", error);
+
     res.status(500).json({
       success: false,
       message: "Email failed to send ❌",
+      error: error.message,
     });
   }
 });
+
+// Use dynamic port for Render
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
