@@ -51,6 +51,7 @@
 // app.listen(5000, () => {
 //   console.log("Server running on http://localhost:5000");
 // }); const express = require("express");
+const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
 require("dotenv").config();
