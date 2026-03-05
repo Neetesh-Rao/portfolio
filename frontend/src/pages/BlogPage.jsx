@@ -57,7 +57,7 @@ function BlogPage() {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/blog");
+      const res = await fetch("https://portfolio-csao.onrender.com/api/blog");
       const data = await res.json();
       setBlogs(data);
     } catch (error) {
@@ -78,7 +78,7 @@ function BlogPage() {
     
     try {
       setLikingBlogId(blogId);
-      const res = await fetch(`http://localhost:5000/api/blog/like/${blogId}`, {
+      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/like/${blogId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -131,7 +131,7 @@ function BlogPage() {
     
     try {
       setCommentingBlogId(blogId);
-      const res = await fetch(`http://localhost:5000/api/blog/comment/${blogId}`, {
+      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/comment/${blogId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

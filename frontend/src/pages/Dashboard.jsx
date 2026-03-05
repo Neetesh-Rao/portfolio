@@ -70,7 +70,7 @@ function Dashboard() {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/blog");
+      const res = await fetch("https://portfolio-csao.onrender.com/api/blog");
       const data = await res.json();
       setBlogs(data);
     } catch (error) {
@@ -172,7 +172,7 @@ function Dashboard() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/blog", {
+      const res = await fetch("https://portfolio-csao.onrender.com/api/blog", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +200,7 @@ function Dashboard() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/blog/${editingBlog._id}`, {
+      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/${editingBlog._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -223,7 +223,7 @@ function Dashboard() {
 
   const confirmDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/blog/${blogToDelete._id}`, {
+      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/${blogToDelete._id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
