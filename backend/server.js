@@ -2,34 +2,47 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-require("dotenv").config();
-const Blog = require("./models/blog");
-const slugify = require("slugify");
+const dns = require("dns");
 const mongoose = require("mongoose");
+const slugify = require("slugify");
+require("dotenv").config();
+
+const Blog = require("./models/blog");
 
 const app = express();
+
+// Force reliable DNS for MongoDB SRV
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 app.use(cors());
 app.use(express.json());
-//midlleware for token verification
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
 
-  if (!token) return res.status(403).json({ message: "Access denied" });
+/* ===============================
+   TOKEN MIDDLEWARE
+================================= */
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader)
+    return res.status(403).json({ message: "Access denied. No token." });
+
+  const token = authHeader.split(" ")[1];
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
     next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
-
-
-// Route for sending email
+/* ===============================
+   EMAIL ROUTE
+================================= */
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
+
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -39,7 +52,7 @@ app.post("/send-email", async (req, res) => {
       },
     });
 
-    const mailOptions = {
+    await transporter.sendMail({
       from: email,
       to: process.env.EMAIL_USER,
       subject: `Portfolio Message from ${name}`,
@@ -49,17 +62,18 @@ app.post("/send-email", async (req, res) => {
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Message:</strong> ${message}</p>
       `,
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ success: true, message: "Email sent successfully" });
+    res.json({ success: true, message: "Email sent successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Email failed to send" });
   }
 });
-// Route for sending email
+
+/* ===============================
+   ADMIN LOGIN
+================================= */
 app.post("/admin/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -76,54 +90,141 @@ app.post("/admin/login", (req, res) => {
 
   res.json({ token });
 });
-//create blog
-app.post("/admin/blog", verifyToken, async (req, res) => {
-  const { title, content, excerpt } = req.body;
 
-  const blog = new Blog({
-    title,
-    slug: slugify(title, { lower: true }),
-    content,
-    excerpt,
-  });
+/* ===============================
+   BLOG ROUTES
+================================= */
 
-  await blog.save();
-  res.json(blog);
-});
-//get all blog
-app.get("/admin/blog", async (req, res) => {
-  const blogs = await Blog.find().sort({ createdAt: -1 });
-  res.json(blogs);
-});
-//get particular
-app.get("/admin/blog/:slug", async (req, res) => {
-  const blog = await Blog.findOne({ slug: req.params.slug });
-  res.json(blog);
-});
-//update blog
-app.put("/admin/blog/:id", verifyToken, async (req, res) => {
-  const updated = await Blog.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
+// CREATE BLOG
+app.post("/api/blog", verifyToken, async (req, res) => {
+  try {
+    const { title, content, excerpt, category, image, author } = req.body;
 
-  res.json(updated);
-});
-//delete blog
-app.delete("/admin/blog/:id", verifyToken, async (req, res) => {
-  await Blog.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted successfully" });
-});
-
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB Connected");
-
-    app.listen(5000, () => {
-      console.log("Server running on http://localhost:5000");
+    const blog = new Blog({
+      title,
+      slug: slugify(title, { lower: true }),
+      content,
+      excerpt,
+      category,
+      image,
+      author,
+      date: new Date(),
     });
+
+    await blog.save();
+    res.status(201).json(blog);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to create blog" });
+  }
+});
+
+// GET ALL BLOGS
+app.get("/api/blog", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ date: -1 });
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+});
+
+// GET SINGLE BLOG
+app.get("/api/blog/:slug", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ slug: req.params.slug });
+
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching blog" });
+  }
+});
+
+// UPDATE BLOG
+app.put("/api/blog/:id", verifyToken, async (req, res) => {
+  try {
+    const updated = await Blog.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update blog" });
+  }
+});
+
+// DELETE BLOG
+app.delete("/api/blog/:id", verifyToken, async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete blog" });
+  }
+});
+
+//like api
+// LIKE BLOG (Public)
+app.put("/api/blog/like/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    blog.likes += 1;
+    await blog.save();
+
+    res.json({ likes: blog.likes });
+
+  } catch (err) {
+    res.status(500).json({ message: "Failed to like blog" });
+  }
+});
+// ADD COMMENT (Public)
+app.post("/api/blog/comment/:id", async (req, res) => {
+  try {
+    const { name, message } = req.body;
+
+    if (!name || !message) {
+      return res.status(400).json({ message: "Name and message required" });
+    }
+
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    blog.comments.push({ name, message });
+    await blog.save();
+
+    res.json(blog.comments);
+
+  } catch (err) {
+    res.status(500).json({ message: "Failed to add comment" });
+  }
+});
+
+/* ===============================
+   MONGODB CONNECTION
+================================= */
+
+const startServer = () => {
+  app.listen(5000, () => {
+    console.log("🚀 Server running on http://localhost:5000");
+  });
+};
+
+mongoose
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 15000,
+  })
+  .then(() => {
+    console.log("✅ MongoDB Connected");
+    startServer();
   })
   .catch((err) => {
-    console.log("MongoDB Connection Error:", err);
+    console.error("❌ MongoDB Connection Error:", err);
   });
