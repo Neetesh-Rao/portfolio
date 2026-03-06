@@ -279,17 +279,17 @@ function Home() {
             : 'bg-transparent dark:bg-transparent'
           }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-20">
+            <div className="flex justify-between items-center h-16 md:h-20">
 
               {/* Logo with Name */}
               <div className="flex-shrink-0 group cursor-pointer">
-                <div className="text-3xl font-bold relative">
+                <div className="text-xl md:text-3xl font-bold relative">
                   <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                     {"<Neetesh />"}
                   </span>
                   <span className="absolute -inset-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg blur-xl opacity-30 group-hover:opacity-50 transition"></span>
                 </div>
-                <p className="text-xs text-gray-400 mt-1 dark:text-gray-300">
+                <p className="text-[10px] md:text-xs text-gray-400 mt-1 dark:text-gray-300">
                   MERN Stack Developer
                 </p>
               </div>
@@ -362,24 +362,35 @@ function Home() {
                 </button>
               </div>
 
-              {/* Mobile Menu Button */}
-              <button
-                className="md:hidden relative w-12 h-12 rounded-xl bg-gray-800/50 dark:bg-gray-200/50 border border-gray-700 dark:border-gray-300 hover:border-indigo-500 transition-colors"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <HiX className="w-6 h-6 mx-auto text-indigo-400" /> : <HiMenu className="w-6 h-6 mx-auto text-gray-400 dark:text-gray-900" />}
-              </button>
+              {/* Mobile Header Icons - FIXED: Added theme toggle */}
+              <div className="md:hidden flex items-center space-x-2">
+                <button
+                  onClick={toggleTheme}
+                  className="relative p-2 rounded-xl bg-gray-800/90 dark:bg-gray-200/90 border border-gray-700 dark:border-gray-300 hover:scale-105 transition-all duration-300"
+                  title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  <span className="relative block text-lg">
+                    {theme === 'dark' ? '🌞' : '🌙'}
+                  </span>
+                </button>
+                <button
+                  className="relative w-10 h-10 rounded-xl bg-gray-800/50 dark:bg-gray-200/50 border border-gray-700 dark:border-gray-300 hover:border-indigo-500 transition-colors flex items-center justify-center"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  {isMenuOpen ? <HiX className="w-5 h-5 text-indigo-400" /> : <HiMenu className="w-5 h-5 text-gray-400 dark:text-gray-900" />}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - FIXED: Better spacing */}
           {isMenuOpen && (
             <div className="md:hidden bg-gray-900/95 dark:bg-gray-100/95 backdrop-blur-lg border-t border-gray-800 dark:border-gray-300">
               {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="block px-6 py-3 text-gray-300 dark:text-gray-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:text-white dark:hover:text-white dark:hover:bg-gradient-to-r dark:hover:from-indigo-400 dark:hover:to-purple-400"
+                  className="block px-4 py-3 text-sm text-gray-300 dark:text-gray-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:text-white dark:hover:text-white dark:hover:bg-gradient-to-r dark:hover:from-indigo-400 dark:hover:to-purple-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item}
@@ -387,43 +398,30 @@ function Home() {
               ))}
 
               {/* Mobile Admin & Blog Links */}
-              <div className="px-6 py-3 space-y-2">
+              <div className="px-4 py-2 space-y-2">
                 <Link
                   to="/admin"
-                  className="flex items-center space-x-3 px-4 py-3 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
+                  className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <FaUserShield className="text-indigo-400" size={18} />
-                  <span className="text-gray-300 dark:text-gray-700 font-medium">Admin Dashboard</span>
+                  <FaUserShield className="text-indigo-400" size={16} />
+                  <span className="text-sm text-gray-300 dark:text-gray-700 font-medium">Admin Dashboard</span>
                 </Link>
                 <Link
                   to="/blog"
-                  className="flex items-center space-x-3 px-4 py-3 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
+                  className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <FaBlog className="text-pink-400" size={18} />
-                  <span className="text-gray-300 dark:text-gray-700 font-medium">Blog</span>
+                  <FaBlog className="text-pink-400" size={16} />
+                  <span className="text-sm text-gray-300 dark:text-gray-700 font-medium">Blog</span>
                 </Link>
-              </div>
-
-              {/* Mobile Theme Toggle */}
-              <div className="px-6 py-3">
-                <button
-                  onClick={toggleTheme}
-                  className="w-full p-3 rounded-xl bg-gray-800/90 dark:bg-gray-200/90 border border-gray-700 dark:border-gray-300 text-gray-300 dark:text-gray-700 hover:scale-105 transition flex items-center justify-center space-x-2"
-                >
-                  <span className="transform group-hover:rotate-12 transition-transform">
-                    {theme === 'dark' ? '🌞' : '🌙'}
-                  </span>
-                  <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                </button>
               </div>
             </div>
           )}
         </nav>
 
-        {/* Hero Section */}
-        <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gray-900 dark:bg-gray-100 transition-colors duration-500">
+        {/* Hero Section - FIXED: Mobile padding and spacing */}
+        <section id="home" className="relative min-h-screen flex items-center justify-center pt-16 md:pt-20 overflow-hidden bg-gray-900 dark:bg-gray-100 transition-colors duration-500">
           {/* Animated Background */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-600 dark:bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -431,12 +429,12 @@ function Home() {
             <div className="absolute top-40 left-40 w-96 h-96 bg-pink-600 dark:bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
             <div className="text-center">
               {/* Profile Image */}
-              <div className="relative inline-block mb-8 group">
+              <div className="relative inline-block mb-6 md:mb-8 group">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 rounded-full blur-2xl opacity-50 animate-pulse"></div>
-                <div className="relative w-40 h-40 mx-auto rounded-full border-4 border-gray-800 dark:border-gray-300 overflow-hidden">
+                <div className="relative w-24 h-24 md:w-40 md:h-40 mx-auto rounded-full border-4 border-gray-800 dark:border-gray-300 overflow-hidden">
                   <img
                     src={headerimage}
                     alt="Neetesh"
@@ -446,67 +444,60 @@ function Home() {
               </div>
 
               {/* Name with Style */}
-              <h1 className="text-6xl md:text-8xl font-bold mb-4">
+              <h1 className="text-4xl md:text-8xl font-bold mb-2 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                   Neetesh
                 </span>
               </h1>
 
-              <div className="flex items-center justify-center space-x-2 mb-4">
-                <FaStar className="text-yellow-400 animate-pulse" />
-                <p className="text-xl text-gray-300 dark:text-gray-800">MERN Stack Developer</p>
-                <FaStar className="text-yellow-400 animate-pulse" />
+              <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
+                <FaStar className="text-yellow-400 animate-pulse text-sm md:text-base" />
+                <p className="text-base md:text-xl text-gray-300 dark:text-gray-800">MERN Stack Developer</p>
+                <FaStar className="text-yellow-400 animate-pulse text-sm md:text-base" />
               </div>
 
-              <p className="text-gray-400 dark:text-gray-700 mb-8 max-w-2xl mx-auto">
+              <p className="text-sm md:text-base text-gray-400 dark:text-gray-700 mb-6 md:mb-8 max-w-2xl mx-auto px-2">
                 Transforming ideas into powerful web applications with MongoDB, Express.js, React, and Node.js
               </p>
 
-              {/* Tech Stack Badges */}
-              <div className="flex flex-wrap justify-center gap-3 mb-10">
-                <span className="px-4 py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
-                  <FaReact className="text-blue-400 mr-2" /> React
+              {/* Tech Stack Badges - FIXED: Better mobile wrapping */}
+              <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-10 px-2">
+                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
+                  <FaReact className="text-blue-400 mr-1 md:mr-2" size={12} /> React
                 </span>
-                <span className="px-4 py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
-                  <FaNodeJs className="text-green-400 mr-2" /> Node.js
+                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
+                  <FaNodeJs className="text-green-400 mr-1 md:mr-2" size={12} /> Node.js
                 </span>
-                <span className="px-4 py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
-                  <SiExpress className="text-gray-400 mr-2" /> Express
+                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
+                  <SiExpress className="text-gray-400 mr-1 md:mr-2" size={12} /> Express
                 </span>
-                <span className="px-4 py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
-                  <SiMongodb className="text-green-500 mr-2" /> MongoDB
+                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
+                  <SiMongodb className="text-green-500 mr-1 md:mr-2" size={12} /> MongoDB
                 </span>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+              {/* CTA Buttons - FIXED: Better mobile stacking */}
+              <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4 mb-8 md:mb-12 px-4">
                 <a
                   href="#contact"
-                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 rounded-xl font-semibold hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-300 transform hover:scale-105 text-white dark:text-gray-900"
+                  className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 rounded-xl font-semibold hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-300 transform hover:scale-105 text-white dark:text-gray-900 text-sm md:text-base"
                 >
                   Hire Neetesh
                 </a>
-                {/* <a
-          href="Resume_Neetesh.pdf"
-          download="Resume_Neetesh.pdf"
-          className="px-8 py-4 bg-gray-800/80 dark:bg-gray-200/30 border border-gray-700 dark:border-gray-300 rounded-xl font-semibold hover:border-indigo-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-gray-300 dark:text-gray-900"
-        >
-          <FaDownload className="mr-2" /> Download Resume
-        </a> */}
                 <button
                   onClick={openResume}
-                  className="px-8 py-4 bg-gray-800/80 dark:bg-gray-200/30 border border-gray-700 dark:border-gray-300 rounded-xl font-semibold hover:border-indigo-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-gray-300 dark:text-gray-900"
+                  className="px-6 py-3 md:px-8 md:py-4 bg-gray-800/80 dark:bg-gray-200/30 border border-gray-700 dark:border-gray-300 rounded-xl font-semibold hover:border-indigo-500 transition-all duration-300 transform hover:scale-105 flex items-center justify-center text-gray-300 dark:text-gray-900 text-sm md:text-base"
                 >
-                  <FaDownload className="mr-2" /> View Resume
+                  <FaDownload className="mr-2" size={14} /> View Resume
                 </button>
               </div>
 
               {/* Social Links */}
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-center space-x-3 md:space-x-4">
                 {[
-                  { icon: <FaGithub />, href: 'https://github.com/Neetesh-Rao', label: 'GitHub' },
-                  { icon: <FaLinkedin />, href: 'https://www.linkedin.com/in/neetesh-kumar-yadav-714767254/', label: 'LinkedIn' },
-                  { icon: <FaInstagram />, href: 'https://www.instagram.com/chaudhary_neetesh_yadav/', label: 'Instagram' }, // New
+                  { icon: <FaGithub size={16} />, href: 'https://github.com/Neetesh-Rao', label: 'GitHub' },
+                  { icon: <FaLinkedin size={16} />, href: 'https://www.linkedin.com/in/neetesh-kumar-yadav-714767254/', label: 'LinkedIn' },
+                  { icon: <FaInstagram size={16} />, href: 'https://www.instagram.com/chaudhary_neetesh_yadav/', label: 'Instagram' },
                 ].map((social, index) => {
                   const isExternal = social.href.startsWith("http");
 
@@ -516,7 +507,7 @@ function Home() {
                       href={social.href}
                       target={isExternal ? "_blank" : "_self"}
                       rel={isExternal ? "noopener noreferrer" : ""}
-                      className="p-3 bg-gray-800/50 dark:bg-gray-200/30 rounded-lg border border-gray-700 dark:border-gray-300 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 dark:hover:from-indigo-400 dark:hover:to-purple-400 transition-all duration-300 transform hover:-translate-y-1 text-gray-300 dark:text-gray-900"
+                      className="p-2 md:p-3 bg-gray-800/50 dark:bg-gray-200/30 rounded-lg border border-gray-700 dark:border-gray-300 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 dark:hover:from-indigo-400 dark:hover:to-purple-400 transition-all duration-300 transform hover:-translate-y-1 text-gray-300 dark:text-gray-900"
                       title={social.label}
                     >
                       {social.icon}
@@ -528,63 +519,63 @@ function Home() {
           </div>
         </section>
 
-        {/* About Section */}
-        <section id="about" className="py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
+        {/* About Section - FIXED: Mobile padding and spacing */}
+        <section id="about" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                   About Neetesh
                 </span>
               </h2>
-              <div className="w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="relative group">
+            <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
+              <div className="relative group order-2 lg:order-1">
                 <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400 rounded-2xl blur-2xl opacity-30"></div>
                 <img
                   src={bitmax}
                   alt="Neetesh Coding"
-                  className="relative rounded-2xl shadow-2xl"
+                  className="relative rounded-2xl shadow-2xl w-full"
                 />
               </div>
 
-              <div className="space-y-6">
-                <p className="text-2xl text-gray-300 dark:text-gray-800 leading-relaxed">
+              <div className="space-y-4 md:space-y-6 order-1 lg:order-2">
+                <p className="text-lg md:text-2xl text-gray-300 dark:text-gray-800 leading-relaxed">
                   Hi, I'm <span className="text-indigo-400 font-bold dark:text-indigo-500">Neetesh</span>, currently working as a
                   <span className="text-indigo-400 font-semibold dark:text-indigo-500"> Full Stack Developer Intern </span>
                   at <span className="text-purple-400 font-semibold dark:text-purple-500">Bitmax Technology, Sector 90 Noida</span>.
                 </p>
 
-                <p className="text-gray-400 dark:text-gray-700 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-400 dark:text-gray-700 leading-relaxed">
                   I work on real-world web applications using the MERN stack (MongoDB, Express.js, React.js, Node.js).
                   My responsibilities include building REST APIs, integrating frontend with backend services,
                   database design, and optimizing application performance.
                 </p>
 
-                <p className="text-gray-400 dark:text-gray-700 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-400 dark:text-gray-700 leading-relaxed">
                   I am passionate about writing clean, scalable code and continuously improving my development skills
                   by working on live projects and enterprise-level solutions.
                 </p>
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8">
-                  <div className="p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                    <div className="text-4xl font-bold text-indigo-400 dark:text-indigo-500">1+</div>
-                    <div className="text-sm text-gray-400 dark:text-gray-700">Years Learning</div>
+                {/* Stats - FIXED: Better mobile grid */}
+                <div className="grid grid-cols-2 gap-3 md:gap-4 pt-4 md:pt-8">
+                  <div className="p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
+                    <div className="text-2xl md:text-4xl font-bold text-indigo-400 dark:text-indigo-500">1+</div>
+                    <div className="text-xs md:text-sm text-gray-400 dark:text-gray-700">Years Learning</div>
                   </div>
-                  <div className="p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                    <div className="text-4xl font-bold text-indigo-400 dark:text-indigo-500">15+</div>
-                    <div className="text-sm text-gray-400 dark:text-gray-700">Projects</div>
+                  <div className="p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
+                    <div className="text-2xl md:text-4xl font-bold text-indigo-400 dark:text-indigo-500">15+</div>
+                    <div className="text-xs md:text-sm text-gray-400 dark:text-gray-700">Projects</div>
                   </div>
-                  <div className="p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                    <div className="text-4xl font-bold text-indigo-400 dark:text-indigo-500">MERN</div>
-                    <div className="text-sm text-gray-400 dark:text-gray-700">Tech Stack</div>
+                  <div className="p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
+                    <div className="text-2xl md:text-4xl font-bold text-indigo-400 dark:text-indigo-500">MERN</div>
+                    <div className="text-xs md:text-sm text-gray-400 dark:text-gray-700">Tech Stack</div>
                   </div>
-                  <div className="p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                    <div className="text-4xl font-bold text-indigo-400 dark:text-indigo-500">100%</div>
-                    <div className="text-sm text-gray-400 dark:text-gray-700">Dedication</div>
+                  <div className="p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
+                    <div className="text-2xl md:text-4xl font-bold text-indigo-400 dark:text-indigo-500">100%</div>
+                    <div className="text-xs md:text-sm text-gray-400 dark:text-gray-700">Dedication</div>
                   </div>
                 </div>
               </div>
@@ -592,44 +583,44 @@ function Home() {
           </div>
         </section>
 
-        {/* Skills Section */}
-        <section id="skills" className="py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
+        {/* Skills Section - FIXED: Mobile padding and grid */}
+        <section id="skills" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                   Neetesh's Skills
                 </span>
               </h2>
-              <div className="w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
             </div>
 
             {/* Skill Categories */}
-            <div className="space-y-16">
+            <div className="space-y-8 md:space-y-16">
               {Object.entries(skills).map(([category, skillList]) => (
-                <div key={category} className="bg-gray-800/30 dark:bg-gray-200/30 rounded-2xl p-8 border border-gray-700 dark:border-gray-300 transition-colors duration-500">
-                  <h3 className="text-3xl font-semibold mb-8 flex items-center capitalize text-gray-300 dark:text-gray-800">
-                    {category === 'frontend' && <FaReact className="text-blue-400 dark:text-blue-500 mr-3" />}
-                    {category === 'backend' && <FaNodeJs className="text-green-400 dark:text-green-500 mr-3" />}
-                    {category === 'database' && <FaDatabase className="text-yellow-400 dark:text-yellow-500 mr-3" />}
-                    {category === 'devops' && <FaCloud className="text-blue-300 dark:text-blue-500 mr-3" />}
-                    {category === 'tools' && <HiChip className="text-purple-400 dark:text-purple-500 mr-3" />}
+                <div key={category} className="bg-gray-800/30 dark:bg-gray-200/30 rounded-2xl p-4 md:p-8 border border-gray-700 dark:border-gray-300 transition-colors duration-500">
+                  <h3 className="text-xl md:text-3xl font-semibold mb-4 md:mb-8 flex items-center capitalize text-gray-300 dark:text-gray-800">
+                    {category === 'frontend' && <FaReact className="text-blue-400 dark:text-blue-500 mr-2 md:mr-3" size={20} />}
+                    {category === 'backend' && <FaNodeJs className="text-green-400 dark:text-green-500 mr-2 md:mr-3" size={20} />}
+                    {category === 'database' && <FaDatabase className="text-yellow-400 dark:text-yellow-500 mr-2 md:mr-3" size={20} />}
+                    {category === 'devops' && <FaCloud className="text-blue-300 dark:text-blue-500 mr-2 md:mr-3" size={20} />}
+                    {category === 'tools' && <HiChip className="text-purple-400 dark:text-purple-500 mr-2 md:mr-3" size={20} />}
                     {category} Expertise
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
                     {skillList.map((skill, index) => (
                       <div key={index} className="group relative">
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg blur opacity-0 group-hover:opacity-30 transition"></div>
-                        <div className="relative p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-lg border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                          <div className="text-4xl mb-3 flex justify-center text-gray-300 dark:text-gray-800">{skill.icon}</div>
-                          <h4 className="font-medium text-sm mb-2 text-gray-300 dark:text-gray-800">{skill.name}</h4>
-                          <div className="mt-2 w-full bg-gray-700 dark:bg-gray-300 rounded-full h-2">
+                        <div className="relative p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-lg border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
+                          <div className="text-2xl md:text-4xl mb-2 md:mb-3 flex justify-center text-gray-300 dark:text-gray-800">{skill.icon}</div>
+                          <h4 className="font-medium text-xs md:text-sm mb-1 md:mb-2 text-gray-300 dark:text-gray-800">{skill.name}</h4>
+                          <div className="mt-1 md:mt-2 w-full bg-gray-700 dark:bg-gray-300 rounded-full h-1 md:h-2">
                             <div
-                              className={`bg-gradient-to-r ${skill.color} h-2 rounded-full`}
+                              className={`bg-gradient-to-r ${skill.color} h-1 md:h-2 rounded-full`}
                               style={{ width: `${skill.level}%` }}
                             ></div>
                           </div>
-                          <span className="text-xs text-indigo-400 dark:text-indigo-500 mt-2 block">{skill.level}%</span>
+                          <span className="text-[10px] md:text-xs text-indigo-400 dark:text-indigo-500 mt-1 md:mt-2 block">{skill.level}%</span>
                         </div>
                       </div>
                     ))}
@@ -640,25 +631,25 @@ function Home() {
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section id="projects" className="py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
+        {/* Projects Section - FIXED: Mobile grid and cards */}
+        <section id="projects" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                   Neetesh's Projects
                 </span>
               </h2>
-              <div className="w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {projects.map((project) => (
                 <div key={project.id} className="group relative">
                   <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-xl opacity-25 group-hover:opacity-50 transition"></div>
                   <div className="relative bg-gray-800/90 dark:bg-gray-200/50 rounded-xl overflow-hidden border border-gray-700 dark:border-gray-300 transition-colors duration-500">
 
-                    <div className="relative overflow-hidden h-48">
+                    <div className="relative overflow-hidden h-40 md:h-48">
                       <img
                         src={project.image}
                         alt={project.title}
@@ -667,40 +658,40 @@ function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent dark:from-gray-200"></div>
                     </div>
 
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors">
+                    <div className="p-4 md:p-6">
+                      <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors">
                         {project.title}
                       </h3>
-                      <p className="text-gray-400 dark:text-gray-800 text-sm mb-4">
+                      <p className="text-xs md:text-sm text-gray-400 dark:text-gray-800 mb-3 md:mb-4">
                         {project.description}
                       </p>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
                         {project.tech.map((tech, i) => (
-                          <span key={i} className="px-2 py-1 bg-gray-700/50 dark:bg-gray-300/30 text-xs rounded-full transition-colors duration-500">
+                          <span key={i} className="px-1.5 py-0.5 md:px-2 md:py-1 bg-gray-700/50 dark:bg-gray-300/30 text-[10px] md:text-xs rounded-full transition-colors duration-500">
                             {tech}
                           </span>
                         ))}
                       </div>
 
-                      <div className="flex justify-between items-center pt-4 border-t border-gray-700 dark:border-gray-300 transition-colors duration-500">
+                      <div className="flex justify-between items-center pt-3 md:pt-4 border-t border-gray-700 dark:border-gray-300 transition-colors duration-500">
                         <a
                           href="https://github.com/Neetesh-Rao/WandarLust"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center space-x-2 text-gray-400 dark:text-gray-800 hover:text-white dark:hover:text-gray-900 transition-colors"
+                          className="flex items-center space-x-1 md:space-x-2 text-gray-400 dark:text-gray-800 hover:text-white dark:hover:text-gray-900 transition-colors text-xs md:text-sm"
                         >
-                          <FaGithub />
-                          <span className="text-sm">Code</span>
+                          <FaGithub size={14} />
+                          <span>Code</span>
                         </a>
                         <a
                           href="https://wandarlust-5yli.onrender.com/"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center space-x-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                          className="flex items-center space-x-1 md:space-x-2 text-indigo-400 hover:text-indigo-300 transition-colors text-xs md:text-sm"
                         >
-                          <span className="text-sm">Live Demo</span>
-                          <FaExternalLinkAlt size={12} />
+                          <span>Live Demo</span>
+                          <FaExternalLinkAlt size={10} />
                         </a>
                       </div>
                     </div>
@@ -712,50 +703,50 @@ function Home() {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* Contact Section - FIXED: Mobile padding */}
         <section
           id="contact"
-          className="py-24 bg-gradient-to-br from-indigo-900/30 via-purple-900/30 to-pink-900/30 dark:from-indigo-100/30 dark:via-purple-100/30 dark:to-pink-100/30 transition-colors duration-500"
+          className="py-16 md:py-24 bg-gradient-to-br from-indigo-900/30 via-purple-900/30 to-pink-900/30 dark:from-indigo-100/30 dark:via-purple-100/30 dark:to-pink-100/30 transition-colors duration-500"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold mb-4">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
                   Contact Neetesh
                 </span>
               </h2>
-              <div className="w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12">
+            <div className="grid lg:grid-cols-2 gap-6 md:gap-12">
 
-              {/* Contact Info */}
-              <div className="space-y-6">
-                <div className="bg-gray-800/50 dark:bg-gray-200/50 p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
-                  <h3 className="text-2xl font-bold mb-6 text-white dark:text-gray-900">Let's Connect</h3>
-                  <div className="space-y-4">
+              {/* Contact Info - FIXED: Mobile padding */}
+              <div className="space-y-4 md:space-y-6">
+                <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
+                  <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Let's Connect</h3>
+                  <div className="space-y-3 md:space-y-4">
 
-                    <div className="flex items-center space-x-4 p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
-                      <MdEmail className="text-indigo-400 text-xl" />
+                    <div className="flex items-center space-x-3 md:space-x-4 p-3 md:p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
+                      <MdEmail className="text-indigo-400 text-lg md:text-xl" />
                       <div>
-                        <p className="text-sm text-gray-400 dark:text-gray-600">Email</p>
-                        <p className="font-semibold text-white dark:text-gray-900">neeteshyadav0206@gmail.com</p>
+                        <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600">Email</p>
+                        <p className="text-sm md:text-base font-semibold text-white dark:text-gray-900 break-all">neeteshyadav0206@gmail.com</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-4 p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
-                      <MdPhone className="text-indigo-400 text-xl" />
+                    <div className="flex items-center space-x-3 md:space-x-4 p-3 md:p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
+                      <MdPhone className="text-indigo-400 text-lg md:text-xl" />
                       <div>
-                        <p className="text-sm text-gray-400 dark:text-gray-600">Phone</p>
-                        <p className="font-semibold text-white dark:text-gray-900">+91 9927195492</p>
+                        <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600">Phone</p>
+                        <p className="text-sm md:text-base font-semibold text-white dark:text-gray-900">+91 9927195492</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-4 p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
-                      <MdLocationOn className="text-indigo-400 text-xl" />
+                    <div className="flex items-center space-x-3 md:space-x-4 p-3 md:p-4 bg-gray-700/30 dark:bg-gray-300/20 rounded-lg transition-colors duration-500">
+                      <MdLocationOn className="text-indigo-400 text-lg md:text-xl" />
                       <div>
-                        <p className="text-sm text-gray-400 dark:text-gray-600">Location</p>
-                        <p className="font-semibold text-white dark:text-gray-900">Greater Noida, Uttar Pradesh</p>
+                        <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600">Location</p>
+                        <p className="text-sm md:text-base font-semibold text-white dark:text-gray-900">Greater Noida, Uttar Pradesh</p>
                       </div>
                     </div>
 
@@ -763,13 +754,12 @@ function Home() {
                 </div>
               </div>
 
-              {/* Contact Form */}
-              <div className="bg-gray-800/50 dark:bg-gray-200/50 p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
-                <h3 className="text-2xl font-bold mb-6 text-white dark:text-gray-900">Send Message</h3>
+              {/* Contact Form - FIXED: Mobile padding */}
+              <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
+                <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Send Message</h3>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-
+                <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div>
                       <input
                         type="text"
@@ -778,7 +768,7 @@ function Home() {
                         onChange={handleChange}
                         required
                         placeholder="Your Name"
-                        className="w-full px-4 py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500"
+                        className="w-full px-3 py-2 md:px-4 md:py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500 text-sm md:text-base"
                       />
                     </div>
 
@@ -790,10 +780,9 @@ function Home() {
                         onChange={handleChange}
                         required
                         placeholder="Your Email"
-                        className="w-full px-4 py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500"
+                        className="w-full px-3 py-2 md:px-4 md:py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500 text-sm md:text-base"
                       />
                     </div>
-
                   </div>
 
                   <div>
@@ -804,14 +793,14 @@ function Home() {
                       required
                       rows="5"
                       placeholder="Your Message"
-                      className="w-full px-4 py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500"
+                      className="w-full px-3 py-2 md:px-4 md:py-3 bg-gray-700/50 dark:bg-gray-300/30 border border-gray-600 dark:border-gray-400 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white dark:text-gray-900 transition-colors duration-500 text-sm md:text-base"
                     ></textarea>
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl font-semibold hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-300"
+                    className="w-full px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl font-semibold hover:shadow-2xl hover:shadow-indigo-500/30 transition-all duration-300 text-sm md:text-base"
                   >
                     {loading ? "Sending..." : "Send to Neetesh"}
                   </button>
@@ -823,31 +812,30 @@ function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-gray-900 dark:bg-gray-100 py-8 border-t border-gray-800 dark:border-gray-300 transition-colors duration-500">
+        {/* Footer - FIXED: Mobile padding */}
+        <footer className="bg-gray-900 dark:bg-gray-100 py-4 md:py-8 border-t border-gray-800 dark:border-gray-300 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 text-center">
-            <p className="text-gray-400 dark:text-gray-700 transition-colors duration-500">
+            <p className="text-xs md:text-base text-gray-400 dark:text-gray-700 transition-colors duration-500">
               © 2026{" "}
               <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent font-bold">
                 Neetesh
               </span>
-              . Made with <FaHeart className="inline text-red-500 mx-1" />
+              . Made with <FaHeart className="inline text-red-500 mx-1 text-xs md:text-sm" />
             </p>
           </div>
         </footer>
 
-        {/* Scroll to Top */}
+        {/* Scroll to Top - FIXED: Mobile positioning */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full shadow-2xl hover:shadow-indigo-500/50 
-               dark:from-indigo-400 dark:to-purple-400 transition-all duration-300"
+            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 p-3 md:p-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full shadow-2xl hover:shadow-indigo-500/50 dark:from-indigo-400 dark:to-purple-400 transition-all duration-300"
           >
-            <FaArrowUp className="text-white dark:text-gray-900" />
+            <FaArrowUp className="text-white dark:text-gray-900 text-sm md:text-base" />
           </button>
         )}
       </div>
-      {/* Resume Modal */}
+      {/* Resume Modal - FIXED: Mobile modal */}
       {isResumeOpen && (
         <>
           {/* Overlay */}
@@ -857,44 +845,44 @@ function Home() {
           />
 
           {/* Modal Wrapper */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
             <div
               className="relative w-full md:w-4/5 lg:w-3/5 max-h-[92vh] 
         bg-white/10 dark:bg-black/40 
         backdrop-blur-2xl 
         border border-white/20 dark:border-white/10
-        rounded-3xl 
+        rounded-2xl md:rounded-3xl 
         shadow-2xl 
         animate-[fadeInScale_.3s_ease-out]"
             >
               {/* Header */}
-              <div className="flex justify-between items-center px-6 py-4 border-b border-white/10">
-                <h2 className="text-lg md:text-xl font-semibold text-white dark:text-gray-100">
+              <div className="flex justify-between items-center px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
+                <h2 className="text-sm md:text-xl font-semibold text-white dark:text-gray-100">
                   Resume Preview
                 </h2>
 
                 <button
                   onClick={closeResume}
-                  className="p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 transition-all duration-200"
+                  className="p-1.5 md:p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 transition-all duration-200"
                 >
-                  <FaTimes size={18} />
+                  <FaTimes size={14} />
                 </button>
               </div>
 
               {/* Resume Viewer */}
-              <div className="p-4">
+              <div className="p-2 md:p-4">
                 <iframe
                   src={resume}
                   title="Resume Preview"
-                  className="w-full h-[70vh] rounded-xl border border-white/10 dark:border-gray-700"
+                  className="w-full h-[60vh] md:h-[70vh] rounded-lg md:rounded-xl border border-white/10 dark:border-gray-700"
                 />
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end gap-4 px-6 py-4 border-t border-white/10">
+              <div className="flex justify-end gap-2 md:gap-4 px-4 md:px-6 py-3 md:py-4 border-t border-white/10">
                 <button
                   onClick={closeResume}
-                  className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition"
+                  className="px-4 py-1.5 md:px-5 md:py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition text-sm md:text-base"
                 >
                   Close
                 </button>
@@ -902,9 +890,9 @@ function Home() {
                 <a
                   href="/Resume_Neetesh.pdf"
                   download={resume}
-                  className="px-6 py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-transform text-white font-medium flex items-center"
+                  className="px-4 py-1.5 md:px-6 md:py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-transform text-white font-medium flex items-center text-sm md:text-base"
                 >
-                  <FaDownload className="mr-2" /> Download
+                  <FaDownload className="mr-1 md:mr-2" size={12} /> Download
                 </a>
               </div>
             </div>
@@ -928,6 +916,16 @@ function Home() {
         }
         .animation-delay-4000 {
           animation-delay: 4s;
+        }
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       `}</style>
     </>

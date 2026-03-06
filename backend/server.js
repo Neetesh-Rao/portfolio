@@ -269,6 +269,24 @@ const startServer = () => {
     console.log("🚀 Server running on http://localhost:5000");
   });
 };
+// GET BLOG BY SLUG
+app.get("/api/blog/slug/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const blog = await Blog.findOne({ slug });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    res.json(blog);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching blog" });
+  }
+});
 
 mongoose
   .connect(process.env.MONGO_URI, {
