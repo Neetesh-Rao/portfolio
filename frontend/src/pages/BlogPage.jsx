@@ -5,6 +5,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { BiHomeAlt } from "react-icons/bi";
 import { HiMenu, HiX } from "react-icons/hi";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 function BlogPage() {
   const { slug } = useParams();
