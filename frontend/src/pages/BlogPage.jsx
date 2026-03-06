@@ -127,73 +127,103 @@ function BlogPage() {
     }
   };
 
-  const handleLike = async (blogId, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+  // const handleLike = async (blogId, e) => {
+  //   if (e) {
+  //     e.preventDefault();
+  //     e.stopPropagation();
+  //   }
     
-    const isLiked = likedBlogs[blogId];
-    const endpoint = isLiked ? 'unlike' : 'like';
+  //   const isLiked = likedBlogs[blogId];
+  //   const endpoint = isLiked ? 'unlike' : 'like';
     
-    try {
-      setLikingBlogId(blogId);
+  //   try {
+  //     setLikingBlogId(blogId);
       
-      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/${endpoint}/${blogId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  //     const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/${endpoint}/${blogId}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      const data = await res.json();
+  //     const data = await res.json();
 
-      if (res.ok) {
-        // Create a new object to ensure React detects the change
-        const updatedLikedBlogs = { ...likedBlogs };
+  //     if (res.ok) {
+  //       // Create a new object to ensure React detects the change
+  //       const updatedLikedBlogs = { ...likedBlogs };
         
-        if (isLiked) {
-          delete updatedLikedBlogs[blogId];
-          toast.success("Unliked! 💔");
-        } else {
-          updatedLikedBlogs[blogId] = true;
-          toast.success("Liked! ❤️");
-        }
+  //       if (isLiked) {
+  //         delete updatedLikedBlogs[blogId];
+  //         toast.success("Unliked! 💔");
+  //       } else {
+  //         updatedLikedBlogs[blogId] = true;
+  //         toast.success("Liked! ❤️");
+  //       }
         
-        // Force a re-render by creating a completely new object
-        setLikedBlogs({ ...updatedLikedBlogs });
+  //       // Force a re-render by creating a completely new object
+  //       setLikedBlogs({ ...updatedLikedBlogs });
         
-        // Also update localStorage
-        localStorage.setItem('likedBlogs', JSON.stringify(updatedLikedBlogs));
+  //       // Also update localStorage
+  //       localStorage.setItem('likedBlogs', JSON.stringify(updatedLikedBlogs));
 
-        // Update selectedBlog if it's the current one
-        if (selectedBlog && selectedBlog._id === blogId) {
-          setSelectedBlog(prev => ({ ...prev, likes: data.likes }));
-        }
+  //       // Update selectedBlog if it's the current one
+  //       if (selectedBlog && selectedBlog._id === blogId) {
+  //         setSelectedBlog(prev => ({ ...prev, likes: data.likes }));
+  //       }
         
-        // Update blogs list if we're on the listing page - THIS IS CRITICAL
-        setBlogs(prevBlogs => 
-          prevBlogs.map(blog => 
-            blog._id === blogId 
-              ? { ...blog, likes: data.likes } 
-              : blog
-          )
-        );
+  //       // Update blogs list if we're on the listing page - THIS IS CRITICAL
+  //       setBlogs(prevBlogs => 
+  //         prevBlogs.map(blog => 
+  //           blog._id === blogId 
+  //             ? { ...blog, likes: data.likes } 
+  //             : blog
+  //         )
+  //       );
 
-        // Force a re-render of the component
-        setTimeout(() => {
-          setLikedBlogs(current => ({ ...current }));
-        }, 100);
+  //       // Force a re-render of the component
+  //       setTimeout(() => {
+  //         setLikedBlogs(current => ({ ...current }));
+  //       }, 100);
+  //     } else {
+  //       toast.error(data.message || (isLiked ? "Failed to unlike ❌" : "Failed to like ❌"));
+  //     }
+  //   } catch (error) {
+  //     toast.error("Network error ❌");
+  //   } finally {
+  //     setLikingBlogId(null);
+  //   }
+  // };
+const handleLike = async (id, e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  try {
+    await axios.post(`/api/blog/like/${id}`);
+
+    setLikedBlogs((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((blogId) => blogId !== id);
       } else {
-        toast.error(data.message || (isLiked ? "Failed to unlike ❌" : "Failed to like ❌"));
+        return [...prev, id];
       }
-    } catch (error) {
-      toast.error("Network error ❌");
-    } finally {
-      setLikingBlogId(null);
-    }
-  };
+    });
 
+    setBlogs((prevBlogs) =>
+      prevBlogs.map((blog) =>
+        blog._id === id
+          ? {
+              ...blog,
+              likes: isBlogLiked(id)
+                ? blog.likes - 1
+                : blog.likes + 1,
+            }
+          : blog
+      )
+    );
+  } catch (error) {
+    console.error("Like error:", error);
+  }
+};
   const handleComment = async (blogId) => {
     if (!comment.trim()) {
       toast.error("Please write a comment");
@@ -613,7 +643,7 @@ function BlogPage() {
                             </Link>
                             <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700 dark:border-gray-300">
                               <div className="flex items-center space-x-3 md:space-x-4">
-                                <button
+                                {/* <button
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -637,7 +667,21 @@ function BlogPage() {
                                     size={12} 
                                   />
                                   <span className="text-xs md:text-sm">{blog.likes || 0}</span>
-                                </button>
+                                </button> */}
+                                <button
+  onClick={(e) => handleLike(blog._id, e)}
+  className={`flex items-center space-x-1 transition ${
+    isBlogLiked(blog._id)
+      ? "text-pink-500"
+      : "text-gray-400 hover:text-pink-500"
+  }`}
+>
+  <FaHeart
+    size={12}
+    className={isBlogLiked(blog._id) ? "fill-current" : ""}
+  />
+  <span className="text-xs md:text-sm">{blog.likes || 0}</span>
+</button>
                                 <Link to={`/blog/${blog.slug || blog._id}`} onClick={(e) => e.stopPropagation()}>
                                   <span className="flex items-center space-x-1 text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition">
                                     <FaComment size={12} />
