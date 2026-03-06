@@ -76,7 +76,7 @@ function BlogPage() {
         url: shareUrl
       });
 
-      toast.success("Post shared successfully 🚀");
+      toast.success("Post is sharing 🚀");
     } catch (error) {
       console.log("Share cancelled");
     }
