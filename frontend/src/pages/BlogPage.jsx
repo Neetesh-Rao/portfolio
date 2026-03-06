@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowLeft, FaCalendarAlt, FaUser, FaTag, FaHeart, FaComment, FaShare, FaHome, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaCalendarAlt, FaUser, FaHeart, FaComment, FaShare, FaHome, FaTimes } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { MdKeyboardArrowLeft } from "react-icons/md";
-import { HiHome } from "react-icons/hi";
 import { BiHomeAlt } from "react-icons/bi";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -66,19 +64,39 @@ function BlogPage() {
       setLoading(false);
     }
   };
+// for sharing
+  const handleShare = async (blog) => {
+  const shareUrl = `https://portfolio-csao.onrender.com/blog/${blog.slug || blog._id}`;
 
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: blog.title,
+        text: blog.excerpt,
+        url: shareUrl
+      });
+
+      toast.success("Post shared successfully 🚀");
+    } catch (error) {
+      console.log("Share cancelled");
+    }
+  } else {
+    // fallback (copy link)
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Link copied to clipboard 🔗");
+  }
+};
+  // Fixed handleLike function with proper error handling
   const handleLike = async (blogId, e) => {
     e.stopPropagation();
     
-    // Check if already liked
-    if (likedBlogs[blogId]) {
-      toast.error("You've already liked this post!");
-      return;
-    }
+    const isLiked = likedBlogs[blogId];
+    const endpoint = isLiked ? 'unlike' : 'like';
     
     try {
       setLikingBlogId(blogId);
-      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/like/${blogId}`, {
+      
+      const res = await fetch(`https://portfolio-csao.onrender.com/api/blog/${endpoint}/${blogId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -89,11 +107,22 @@ function BlogPage() {
 
       if (res.ok) {
         // Update liked blogs in state and localStorage
-        const updatedLikedBlogs = { ...likedBlogs, [blogId]: true };
+        const updatedLikedBlogs = { ...likedBlogs };
+        
+        if (isLiked) {
+          // Unlike: remove from liked blogs
+          delete updatedLikedBlogs[blogId];
+          toast.success("Unliked! 💔");
+        } else {
+          // Like: add to liked blogs
+          updatedLikedBlogs[blogId] = true;
+          toast.success("Liked! ❤️");
+        }
+        
         setLikedBlogs(updatedLikedBlogs);
         localStorage.setItem('likedBlogs', JSON.stringify(updatedLikedBlogs));
 
-        // Update the blogs state with new like count
+        // Update the blogs state with new like count from server
         setBlogs(prevBlogs => 
           prevBlogs.map(blog => 
             blog._id === blogId 
@@ -102,17 +131,15 @@ function BlogPage() {
           )
         );
         
-        // Also update selectedBlog if it's the one being liked
+        // Also update selectedBlog if it's the one being liked/unliked
         if (selectedBlog && selectedBlog._id === blogId) {
           setSelectedBlog(prev => ({ ...prev, likes: data.likes }));
         }
-        
-        toast.success("Liked! ❤️");
       } else {
-        toast.error("Failed to like ❌");
+        toast.error(data.message || (isLiked ? "Failed to unlike ❌" : "Failed to like ❌"));
       }
     } catch (error) {
-      toast.error("Server error ❌");
+      toast.error("Network error ❌");
     } finally {
       setLikingBlogId(null);
     }
@@ -387,8 +414,8 @@ function BlogPage() {
                                     likingBlogId === blog._id 
                                       ? 'text-gray-500 cursor-not-allowed' 
                                       : likedBlogs[blog._id]
-                                        ? 'text-red-500 hover:text-red-600'
-                                        : 'text-gray-400 dark:text-gray-600 hover:text-red-500'
+                                        ? 'text-pink-500 hover:text-pink-600'
+                                        : 'text-gray-400 dark:text-gray-600 hover:text-pink-500'
                                   }`}
                                 >
                                   <FaHeart 
@@ -412,12 +439,15 @@ function BlogPage() {
                                   <span className="text-xs md:text-sm">{blog.comments?.length || 0}</span>
                                 </button>
                               </div>
-                              <button 
-                                onClick={(e) => e.stopPropagation()} 
-                                className="text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition"
-                              >
-                                <FaShare size={12} />
-                              </button>
+                             <button
+  onClick={(e) => {
+    e.stopPropagation();
+    handleShare(blog);
+  }}
+  className="text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition"
+>
+  <FaShare size={12} />
+</button>
                             </div>
                           </div>
                         </div>
@@ -503,7 +533,7 @@ function BlogPage() {
                     </span>
                   )}
                   
-                  {/* Like Button in Modal */}
+                  {/* Like/Unlike Button in Modal */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -514,8 +544,8 @@ function BlogPage() {
                       likingBlogId === selectedBlog._id 
                         ? 'bg-gray-600 cursor-not-allowed' 
                         : likedBlogs[selectedBlog._id]
-                          ? 'bg-red-500/20 text-red-500'
-                          : 'bg-gray-700/50 text-gray-400 hover:bg-red-500/20 hover:text-red-500'
+                          ? 'bg-pink-500/20 text-pink-500 hover:bg-pink-500/30'
+                          : 'bg-gray-700/50 text-gray-400 hover:bg-pink-500/20 hover:text-pink-500'
                     }`}
                   >
                     <FaHeart 
@@ -525,6 +555,9 @@ function BlogPage() {
                       size={16} 
                     />
                     <span>{selectedBlog.likes || 0}</span>
+                    <span className="text-xs ml-1">
+                      {likedBlogs[selectedBlog._id] ? '(Unlike)' : '(Like)'}
+                    </span>
                   </button>
                 </div>
 

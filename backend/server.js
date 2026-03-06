@@ -206,7 +206,60 @@ app.post("/api/blog/comment/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to add comment" });
   }
 });
+// app.put("/api/blog/unlike/:id", async (req, res) => {
+//   try {
+//     const blog = await Blog.findById(req.params.id);
 
+//     if (!blog) {
+//       return res.status(404).json({ message: "Blog not found" });
+//     }
+
+//     // likes 0 se niche na jaye
+//     if (blog.likes > 0) {
+//       blog.likes -= 1;
+//     }
+
+//     await blog.save();
+
+//     res.json({
+//       message: "Blog unliked",
+//       likes: blog.likes
+//     });
+
+//   } catch (err) {
+//     res.status(500).json({ message: "Failed to unlike blog" });
+//   }
+// });
+app.put("/api/blog/unlike/:id", async (req, res) => {
+  try {
+
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    if (blog.likes <= 0) {
+      return res.json({
+        message: "No likes to remove",
+        likes: blog.likes
+      });
+    }
+
+    blog.likes = blog.likes - 1;
+
+    await blog.save();
+
+    res.json({
+      message: "Blog unliked",
+      likes: blog.likes
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to unlike blog" });
+  }
+});
 /* ===============================
    MONGODB CONNECTION
 ================================= */

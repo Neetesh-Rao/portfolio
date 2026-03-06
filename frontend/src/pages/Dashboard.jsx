@@ -4,7 +4,8 @@ import {
   FaPlus, FaEdit, FaTrash, FaSave, FaTimes, 
   FaBlog, FaImage, FaTag, 
   FaEye, FaSignOutAlt, FaUserShield,
-  FaHome, FaCalendarAlt, FaUser, FaExclamationTriangle
+  FaHome, FaCalendarAlt, FaUser, FaExclamationTriangle,
+  FaHeart, FaComment, FaUserCircle
 } from "react-icons/fa";
 import { MdTitle, MdDescription, MdFormatQuote } from "react-icons/md";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -253,6 +254,12 @@ function Dashboard() {
   // Categories for dropdown
   const categories = ["Development", "React", "Node.js", "MongoDB", "JavaScript", "Tutorial", "Career"];
 
+  // Format date function
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false} />
@@ -348,7 +355,7 @@ function Dashboard() {
           )}
         </nav>
 
-        {/* Main Dashboard Content - Added flex-1 to push footer down */}
+        {/* Main Dashboard Content */}
         <main className="flex-1 relative pt-32 pb-24 px-4">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
@@ -411,11 +418,23 @@ function Dashboard() {
                                 {blog.category || "Development"}
                               </span>
                               <span className="text-xs text-gray-400 dark:text-gray-600">
-                                {new Date(blog.date || Date.now()).toLocaleDateString()}
+                                {formatDate(blog.date || Date.now())}
                               </span>
                             </div>
                             <h3 className="text-lg md:text-xl font-bold mb-2">{blog.title}</h3>
-                            <p className="text-gray-400 dark:text-gray-600 text-sm line-clamp-2">{blog.excerpt}</p>
+                            <p className="text-gray-400 dark:text-gray-600 text-sm line-clamp-2 mb-3">{blog.excerpt}</p>
+                            
+                            {/* Like and Comment Stats */}
+                            <div className="flex items-center space-x-4 text-sm">
+                              <div className="flex items-center space-x-1 text-pink-400">
+                                <FaHeart size={14} />
+                                <span>{blog.likes || 0} likes</span>
+                              </div>
+                              <div className="flex items-center space-x-1 text-blue-400">
+                                <FaComment size={14} />
+                                <span>{blog.comments?.length || 0} comments</span>
+                              </div>
+                            </div>
                           </div>
                           <div className="flex items-center space-x-2 md:space-x-3">
                             <button
@@ -450,7 +469,7 @@ function Dashboard() {
           </div>
         </main>
 
-        {/* Footer - Now properly positioned at bottom */}
+        {/* Footer */}
         <footer className="bg-gray-900/50 dark:bg-gray-100/50 py-4 md:py-6 border-t border-gray-800 dark:border-gray-300 relative z-10 mt-auto">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600">© 2026 Neetesh's Blog - Admin Dashboard</p>
@@ -534,7 +553,7 @@ function Dashboard() {
         </>
       )}
 
-      {/* View Blog Modal - Fixed Image Display */}
+      {/* View Blog Modal - Updated to show likes and comments */}
       {showViewModal && selectedBlog && (
         <>
           <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50" onClick={closeViewModal}></div>
@@ -562,12 +581,14 @@ function Dashboard() {
                     />
                   </div>
                 )}
+                
+                {/* Blog Meta Information */}
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                   <span className="flex items-center text-gray-400 dark:text-gray-600">
                     <FaUser className="mr-2 text-indigo-400" /> {selectedBlog.author || "Neetesh"}
                   </span>
                   <span className="flex items-center text-gray-400 dark:text-gray-600">
-                    <FaCalendarAlt className="mr-2 text-indigo-400" /> {new Date(selectedBlog.date || Date.now()).toLocaleDateString()}
+                    <FaCalendarAlt className="mr-2 text-indigo-400" /> {formatDate(selectedBlog.date || Date.now())}
                   </span>
                   {selectedBlog.category && (
                     <span className="px-3 py-1 bg-indigo-600/20 dark:bg-indigo-500/20 rounded-full text-indigo-400 text-sm">
@@ -575,11 +596,73 @@ function Dashboard() {
                     </span>
                   )}
                 </div>
-                <div className="prose prose-invert dark:prose-gray max-w-none">
+
+                {/* Like and Comment Stats - Enhanced Display */}
+                <div className="flex items-center gap-6 mb-8 p-4 bg-gray-700/30 dark:bg-gray-300/30 rounded-xl">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-pink-600/20 rounded-lg">
+                      <FaHeart className="text-pink-400 text-xl" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400 dark:text-gray-600">Total Likes</p>
+                      <p className="text-2xl font-bold text-pink-400">{selectedBlog.likes || 0}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-blue-600/20 rounded-lg">
+                      <FaComment className="text-blue-400 text-xl" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400 dark:text-gray-600">Total Comments</p>
+                      <p className="text-2xl font-bold text-blue-400">{selectedBlog.comments?.length || 0}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Blog Content */}
+                <div className="prose prose-invert dark:prose-gray max-w-none mb-8">
                   <p className="text-gray-300 dark:text-gray-700 leading-relaxed whitespace-pre-wrap">
                     {selectedBlog.content || selectedBlog.excerpt}
                   </p>
                 </div>
+
+                {/* Comments Section */}
+                {selectedBlog.comments && selectedBlog.comments.length > 0 && (
+                  <div className="mt-8 pt-8 border-t border-gray-700 dark:border-gray-300">
+                    <h3 className="text-xl font-bold mb-6 flex items-center">
+                      <FaComment className="mr-2 text-blue-400" /> 
+                      Comments ({selectedBlog.comments.length})
+                    </h3>
+                    <div className="space-y-4">
+                      {selectedBlog.comments.map((comment, index) => (
+                        <div key={index} className="bg-gray-700/30 dark:bg-gray-300/30 rounded-xl p-4">
+                          <div className="flex items-start space-x-3">
+                            <FaUserCircle className="text-gray-400 text-2xl flex-shrink-0" />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="font-semibold text-indigo-400">{comment.name}</h4>
+                                {comment.date && (
+                                  <span className="text-xs text-gray-400 dark:text-gray-600">
+                                    {formatDate(comment.date)}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-300 dark:text-gray-700">{comment.message}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* No Comments Message */}
+                {(!selectedBlog.comments || selectedBlog.comments.length === 0) && (
+                  <div className="mt-8 pt-8 border-t border-gray-700 dark:border-gray-300 text-center py-8">
+                    <FaComment className="text-4xl text-gray-500 mx-auto mb-3" />
+                    <p className="text-gray-400 dark:text-gray-600">No comments yet</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
