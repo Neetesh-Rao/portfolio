@@ -121,6 +121,7 @@ function BlogPage() {
   };
 
   const handleLike = async (blogId, e) => {
+    e.preventDefault(); // Added this to prevent default behavior
     e.stopPropagation();
     
     const isLiked = likedBlogs[blogId];
@@ -139,6 +140,7 @@ function BlogPage() {
       const data = await res.json();
 
       if (res.ok) {
+        // Create a new object to ensure React detects the change
         const updatedLikedBlogs = { ...likedBlogs };
         
         if (isLiked) {
@@ -149,7 +151,8 @@ function BlogPage() {
           toast.success("Liked! ❤️");
         }
         
-        setLikedBlogs(updatedLikedBlogs);
+        // Force a new object reference to ensure React re-renders
+        setLikedBlogs({ ...updatedLikedBlogs });
         localStorage.setItem('likedBlogs', JSON.stringify(updatedLikedBlogs));
 
         // Update selectedBlog if it's the current one
@@ -592,6 +595,7 @@ function BlogPage() {
                                 <button
                                   onClick={(e) => {
                                     e.preventDefault();
+                                    e.stopPropagation();
                                     handleLike(blog._id, e);
                                   }}
                                   disabled={likingBlogId === blog._id}
@@ -621,6 +625,7 @@ function BlogPage() {
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
+                                  e.stopPropagation();
                                   handleShare(blog);
                                 }}
                                 className="text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition"
