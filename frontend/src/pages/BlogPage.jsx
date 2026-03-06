@@ -562,17 +562,18 @@ function BlogPage() {
               </div>
             )}
 
-            {/* Blog Grid */}
+            {/* Blog Grid - UPDATED FOR CONSISTENT CARD SIZES */}
             {!loading && (
               <>
                 {blogs.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-2 md:px-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-2 md:px-0 auto-rows-fr">
                     {blogs.map((blog) => (
-                      <div key={blog._id} className="group relative">
+                      <div key={blog._id} className="group relative h-full">
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-xl opacity-25 group-hover:opacity-50 transition"></div>
-                        <div className="relative bg-gray-800/90 dark:bg-gray-200/90 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700 dark:border-gray-300 transition-all duration-300 transform group-hover:-translate-y-2">
-                          <Link to={`/blog/${blog.slug || blog._id}`}>
-                            <div className="relative h-40 md:h-48 overflow-hidden bg-gray-700 dark:bg-gray-300">
+                        <div className="relative bg-gray-800/90 dark:bg-gray-200/90 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700 dark:border-gray-300 transition-all duration-300 transform group-hover:-translate-y-2 h-full flex flex-col">
+                          <Link to={`/blog/${blog.slug || blog._id}`} className="flex flex-col h-full">
+                            {/* Fixed height image section */}
+                            <div className="relative h-40 md:h-48 overflow-hidden bg-gray-700 dark:bg-gray-300 flex-shrink-0">
                               {blog.image ? (
                                 <img
                                   src={blog.image}
@@ -591,72 +592,89 @@ function BlogPage() {
                                 </span>
                               )}
                             </div>
-                          </Link>
-                          <div className="p-4 md:p-6">
-                            <Link to={`/blog/${blog.slug || blog._id}`}>
-                              <div className="flex items-center space-x-3 md:space-x-4 text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-2 md:mb-3">
-                                <span className="flex items-center">
-                                  <FaUser className="mr-1 text-indigo-400" size={10} />
-                                  {blog.author || "Neetesh"}
+
+                            {/* Content section with fixed heights */}
+                            <div className="p-4 md:p-6 flex flex-col flex-1">
+                              {/* Author and date - fixed height */}
+                              <div className="flex items-center space-x-3 md:space-x-4 text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-2 md:mb-3 h-5 md:h-6 overflow-hidden">
+                                <span className="flex items-center truncate">
+                                  <FaUser className="mr-1 text-indigo-400 flex-shrink-0" size={10} />
+                                  <span className="truncate">{blog.author || "Neetesh"}</span>
                                 </span>
-                                <span className="flex items-center">
-                                  <FaCalendarAlt className="mr-1 text-indigo-400" size={10} />
-                                  {blog.date ? new Date(blog.date).toLocaleDateString() : new Date().toLocaleDateString()}
-                                </span>
-                              </div>
-                              <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors line-clamp-2">
-                                {blog.title}
-                              </h3>
-                              <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-3 md:mb-4 line-clamp-3">
-                                {blog.excerpt}
-                              </p>
-                            </Link>
-                            <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700 dark:border-gray-300">
-                              <div className="flex items-center space-x-3 md:space-x-4">
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleLike(blog._id, e);
-                                  }}
-                                  disabled={likingBlogId === blog._id}
-                                  className={`flex items-center space-x-1 transition ${
-                                    likingBlogId === blog._id 
-                                      ? 'text-gray-500 cursor-not-allowed' 
-                                      : isBlogLiked(blog._id)
-                                        ? 'text-pink-500 hover:text-pink-600'
-                                        : 'text-gray-400 dark:text-gray-600 hover:text-pink-500'
-                                  }`}
-                                >
-                                  <FaHeart 
-                                    className={`hover:scale-110 transition ${
-                                      likingBlogId === blog._id ? 'animate-pulse' : ''
-                                    } ${
-                                      isBlogLiked(blog._id) ? 'fill-current' : ''
-                                    }`} 
-                                    size={12} 
-                                  />
-                                  <span className="text-xs md:text-sm">{blog.likes || 0}</span>
-                                </button>
-                                <Link to={`/blog/${blog.slug || blog._id}`} onClick={(e) => e.stopPropagation()}>
-                                  <span className="flex items-center space-x-1 text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition">
-                                    <FaComment size={12} />
-                                    <span className="text-xs md:text-sm">{blog.comments?.length || 0}</span>
+                                <span className="flex items-center flex-shrink-0">
+                                  <FaCalendarAlt className="mr-1 text-indigo-400 flex-shrink-0" size={10} />
+                                  <span className="text-xs whitespace-nowrap">
+                                    {blog.date ? new Date(blog.date).toLocaleDateString('en-IN', {
+                                      day: 'numeric',
+                                      month: 'short'
+                                    }) : new Date().toLocaleDateString('en-IN', {
+                                      day: 'numeric',
+                                      month: 'short'
+                                    })}
                                   </span>
-                                </Link>
+                                </span>
                               </div>
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleShare(blog);
-                                }}
-                                className="text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition"
-                              >
-                                <FaShare size={12} />
-                              </button>
+                              
+                              {/* Title - fixed height with 2 lines max */}
+                              <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors h-14 md:h-16 overflow-hidden">
+                                <span className="line-clamp-2">{blog.title}</span>
+                              </h3>
+                              
+                              {/* Excerpt - fixed height with 2 lines on mobile, 3 on desktop */}
+                              <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-3 md:mb-4 h-12 md:h-16 overflow-hidden">
+                                <span className="line-clamp-2 md:line-clamp-3">{blog.excerpt}</span>
+                              </p>
+                              
+                              {/* Footer - auto margin top to push to bottom */}
+                              <div className="mt-auto">
+                                <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700 dark:border-gray-300">
+                                  <div className="flex items-center space-x-3 md:space-x-4">
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleLike(blog._id, e);
+                                      }}
+                                      disabled={likingBlogId === blog._id}
+                                      className={`flex items-center space-x-1 transition ${
+                                        likingBlogId === blog._id 
+                                          ? 'text-gray-500 cursor-not-allowed' 
+                                          : isBlogLiked(blog._id)
+                                            ? 'text-pink-500 hover:text-pink-600'
+                                            : 'text-gray-400 dark:text-gray-600 hover:text-pink-500'
+                                      }`}
+                                    >
+                                      <FaHeart 
+                                        className={`hover:scale-110 transition ${
+                                          likingBlogId === blog._id ? 'animate-pulse' : ''
+                                        } ${
+                                          isBlogLiked(blog._id) ? 'fill-current' : ''
+                                        }`} 
+                                        size={12} 
+                                      />
+                                      <span className="text-xs md:text-sm">{blog.likes || 0}</span>
+                                    </button>
+                                    <Link to={`/blog/${blog.slug || blog._id}`} onClick={(e) => e.stopPropagation()}>
+                                      <span className="flex items-center space-x-1 text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition">
+                                        <FaComment size={12} />
+                                        <span className="text-xs md:text-sm">{blog.comments?.length || 0}</span>
+                                      </span>
+                                    </Link>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleShare(blog);
+                                    }}
+                                    className="text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition"
+                                  >
+                                    <FaShare size={12} />
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                          </Link>
                         </div>
                       </div>
                     ))}
