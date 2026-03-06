@@ -21,7 +21,11 @@ import {
   FaTimes,
   FaUserShield,
   FaBlog,
-  FaCrown
+  FaCrown,
+  FaCode,
+  FaLaptopCode,
+  FaTools,
+  FaRocket
 } from 'react-icons/fa';
 
 import {
@@ -33,16 +37,20 @@ import {
   SiPostman,
   SiJsonwebtokens,
   SiCss3,
-  SiHtml5
+  SiHtml5,
+  SiMysql,
+  SiSocketdotio,
+  SiRender,
+  SiVercel
 } from 'react-icons/si';
-import { HiMenu, HiX, HiChip } from 'react-icons/hi';
+import { HiMenu, HiX, HiChip, HiLightningBolt } from 'react-icons/hi';
 import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { GiBrain, GiNetworkBars, GiCheckMark } from 'react-icons/gi';
 import headerimage from '/profile.jpeg'
 import bitmax from '/ChatGPT Image Mar 2, 2026, 05_10_42 PM.png'
 import wandarlust from '/wandarlust.png'
 import resume from '/Resume_Neetesh.pdf'
-
 
 function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,40 +85,45 @@ function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Skills Data
+  // Skills Data - UPDATED with Vercel added, Redis removed
   const skills = {
     frontend: [
-      { name: 'HTML5', icon: <SiHtml5 className="text-orange-500" />, level: 95, color: 'from-orange-400 to-orange-600' },
-      { name: 'CSS3', icon: <SiCss3 className="text-blue-500" />, level: 92, color: 'from-blue-400 to-blue-600' },
-      { name: 'JavaScript', icon: <SiJavascript className="text-yellow-400" />, level: 94, color: 'from-yellow-400 to-yellow-600' },
-      { name: 'React.js', icon: <FaReact className="text-blue-400" />, level: 90, color: 'from-blue-400 to-blue-600' },
-      { name: 'Redux', icon: <SiRedux className="text-purple-500" />, level: 88, color: 'from-purple-400 to-purple-600' },
-      { name: 'Tailwind CSS', icon: <SiTailwindcss className="text-cyan-400" />, level: 90, color: 'from-cyan-400 to-cyan-600' },
-      { name: 'Bootstrap', icon: <FaBootstrap className="text-purple-600" />, level: 85, color: 'from-purple-500 to-purple-700' },
+      { name: 'HTML5', icon: <SiHtml5 className="text-orange-500" />, level: 95, color: 'from-orange-400 to-orange-600', description: 'Semantic markup, SEO optimization' },
+      { name: 'CSS3', icon: <SiCss3 className="text-blue-500" />, level: 92, color: 'from-blue-400 to-blue-600', description: 'Flexbox, Grid, Animations' },
+      { name: 'JavaScript', icon: <SiJavascript className="text-yellow-400" />, level: 94, color: 'from-yellow-400 to-yellow-600', description: 'ES6+, Async/Await, DOM manipulation' },
+      { name: 'React.js', icon: <FaReact className="text-blue-400" />, level: 90, color: 'from-blue-400 to-blue-600', description: 'Hooks, Context, Redux' },
+      { name: 'Redux', icon: <SiRedux className="text-purple-500" />, level: 88, color: 'from-purple-400 to-purple-600', description: 'State management, Redux Toolkit' },
+      { name: 'Tailwind CSS', icon: <SiTailwindcss className="text-cyan-400" />, level: 90, color: 'from-cyan-400 to-cyan-600', description: 'Utility-first, responsive design' },
+      { name: 'Bootstrap', icon: <FaBootstrap className="text-purple-600" />, level: 85, color: 'from-purple-500 to-purple-700', description: 'Rapid prototyping, components' },
     ],
 
     backend: [
-      { name: 'Node.js', icon: <FaNodeJs className="text-green-500" />, level: 92, color: 'from-green-400 to-green-600' },
-      { name: 'Express.js', icon: <SiExpress className="text-gray-400" />, level: 90, color: 'from-gray-500 to-gray-700' },
-      { name: 'REST APIs', icon: <FaServer className="text-orange-400" />, level: 94, color: 'from-orange-400 to-orange-600' },
-      { name: 'JWT Authentication', icon: <SiJsonwebtokens className="text-yellow-500" />, level: 90, color: 'from-yellow-400 to-yellow-600' },
+      { name: 'Node.js', icon: <FaNodeJs className="text-green-500" />, level: 92, color: 'from-green-400 to-green-600', description: 'Event-driven, non-blocking I/O' },
+      { name: 'Express.js', icon: <SiExpress className="text-gray-400" />, level: 90, color: 'from-gray-500 to-gray-700', description: 'RESTful APIs, middleware' },
+      { name: 'REST APIs', icon: <FaServer className="text-orange-400" />, level: 94, color: 'from-orange-400 to-orange-600', description: 'API design, CRUD operations' },
+      { name: 'JWT Auth', icon: <SiJsonwebtokens className="text-yellow-500" />, level: 90, color: 'from-yellow-400 to-yellow-600', description: 'Authentication, authorization' },
+      { name: 'Socket.io', icon: <SiSocketdotio className="text-white dark:text-gray-800" />, level: 80, color: 'from-gray-600 to-gray-800', description: 'Real-time bidirectional communication' },
     ],
 
     database: [
-      { name: 'MongoDB', icon: <SiMongodb className="text-green-500" />, level: 92, color: 'from-green-400 to-green-600' },
-      { name: 'SQL', icon: <FaDatabase className="text-blue-400" />, level: 85, color: 'from-blue-400 to-blue-600' },
+      { name: 'MongoDB', icon: <SiMongodb className="text-green-500" />, level: 92, color: 'from-green-400 to-green-600', description: 'NoSQL, aggregation, indexing' },
+      { name: 'MySQL', icon: <SiMysql className="text-blue-400" />, level: 85, color: 'from-blue-400 to-blue-600', description: 'SQL, relationships, queries' },
+    ],
+
+    devops: [
+      { name: 'Git/GitHub', icon: <FaGitAlt className="text-orange-600" />, level: 94, color: 'from-orange-500 to-orange-700', description: 'Version control, workflows' },
+      { name: 'Render', icon: <SiRender className="text-blue-500" />, level: 88, color: 'from-blue-400 to-blue-600', description: 'Deployment, hosting, CI/CD' },
+      { name: 'Vercel', icon: <SiVercel className="text-white dark:text-gray-800" />, level: 90, color: 'from-gray-600 to-gray-800', description: 'Frontend deployment, serverless functions' },
     ],
 
     tools: [
-      { name: 'Git/GitHub', icon: <FaGitAlt className="text-orange-600" />, level: 94, color: 'from-orange-500 to-orange-700' },
-      { name: 'Postman', icon: <SiPostman className="text-orange-500" />, level: 92, color: 'from-orange-400 to-orange-600' },
-      { name: 'VS Code', icon: <HiChip className="text-blue-500" />, level: 95, color: 'from-blue-400 to-blue-600' },
+      { name: 'Postman', icon: <SiPostman className="text-orange-500" />, level: 92, color: 'from-orange-400 to-orange-600', description: 'API testing, collections' },
+      { name: 'VS Code', icon: <HiChip className="text-blue-500" />, level: 95, color: 'from-blue-400 to-blue-600', description: 'Extensions, debugging' },
     ]
   };
+
   // Projects Data
   const projects = [
-
-
     {
       id: 1,
       title: "WandarLust",
@@ -174,6 +187,7 @@ function Home() {
       description: "Developed multiple production-ready web applications using React, Node.js, and MongoDB."
     }
   ];
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -181,6 +195,7 @@ function Home() {
   });
 
   const [loading, setLoading] = useState(false);
+  
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -193,9 +208,7 @@ function Home() {
     setLoading(true);
 
     try {
-      // const response = await fetch("http://localhost:5000/send-email", {
-            const response = await fetch("https://portfolio-csao.onrender.com/send-email", {
-
+      const response = await fetch("https://portfolio-csao.onrender.com/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -217,23 +230,20 @@ function Home() {
 
     setLoading(false);
   };
-  // start with "dark" by default but override with saved preference or system setting
+  
+  // Theme management
   const [theme, setTheme] = useState('dark');
 
-  // initialize theme on first mount
   useEffect(() => {
-    // read previous selection from localStorage
     const stored = localStorage.getItem('theme');
     if (stored === 'dark' || stored === 'light') {
       setTheme(stored);
     } else {
-      // if nothing stored, fall back to system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setTheme(prefersDark ? 'dark' : 'light');
     }
   }, []);
 
-  // reflect theme in <html> class and persist the choice
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -246,10 +256,12 @@ function Home() {
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+  
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   const openResume = () => setIsResumeOpen(true);
   const closeResume = () => setIsResumeOpen(false);
+  
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
@@ -259,7 +271,7 @@ function Home() {
 
     if (isResumeOpen) {
       document.addEventListener("keydown", handleEsc);
-      document.body.style.overflow = "hidden"; // lock scroll
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
@@ -267,12 +279,13 @@ function Home() {
       document.body.style.overflow = "auto";
     };
   }, [isResumeOpen]);
+
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false} />
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white
-                dark:bg-gradient-to-br dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 dark:text-gray-900">
-        {/* All your sections go here */}
+                    dark:bg-gradient-to-br dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 dark:text-gray-900">
+        
         {/* Navigation */}
         <nav className={`fixed w-full z-50 transition-all duration-500 ${activeSection !== 'home'
             ? 'bg-gray-900/95 backdrop-blur-lg shadow-2xl dark:bg-gray-100/95'
@@ -296,7 +309,7 @@ function Home() {
 
               {/* Desktop Menu */}
               <div className="hidden md:flex items-center space-x-4">
-                {['Home', 'About', 'Skills', 'Projects', 'Contact',].map((item) => (
+                {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
                   <a
                     key={item}
                     href={`#${item.toLowerCase()}`}
@@ -309,9 +322,8 @@ function Home() {
                   </a>
                 ))}
 
-                {/* Redesigned Admin & Blog Links - Side by side with new style */}
+                {/* Admin & Blog Links */}
                 <div className="flex items-center space-x-2 ml-2">
-                  {/* Admin Link - Premium Style */}
                   <Link
                     to="/admin"
                     className="relative group"
@@ -328,7 +340,6 @@ function Home() {
                     </div>
                   </Link>
 
-                  {/* Blog Link - Premium Style */}
                   <Link
                     to="/blog"
                     className="relative group"
@@ -346,23 +357,20 @@ function Home() {
                   </Link>
                 </div>
 
-                {/* Enhanced Theme Toggle Button */}
+                {/* Theme Toggle Button */}
                 <button
                   onClick={toggleTheme}
                   className="relative group p-3 rounded-xl bg-gray-800/90 dark:bg-gray-200/90 border border-gray-700 dark:border-gray-300 hover:scale-105 transition-all duration-300"
                   title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 >
-                  {/* Glow effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-30 transition duration-300"></div>
-                  
-                  {/* Icon with animation */}
                   <span className="relative block transform group-hover:rotate-12 transition-transform duration-300">
                     {theme === 'dark' ? '🌞' : '🌙'}
                   </span>
                 </button>
               </div>
 
-              {/* Mobile Header Icons - FIXED: Added theme toggle */}
+              {/* Mobile Header Icons */}
               <div className="md:hidden flex items-center space-x-2">
                 <button
                   onClick={toggleTheme}
@@ -383,7 +391,7 @@ function Home() {
             </div>
           </div>
 
-          {/* Mobile Menu - FIXED: Better spacing */}
+          {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden bg-gray-900/95 dark:bg-gray-100/95 backdrop-blur-lg border-t border-gray-800 dark:border-gray-300">
               {['Home', 'About', 'Skills', 'Projects', 'Contact'].map((item) => (
@@ -420,7 +428,7 @@ function Home() {
           )}
         </nav>
 
-        {/* Hero Section - FIXED: Mobile padding and spacing */}
+        {/* Hero Section */}
         <section id="home" className="relative min-h-screen flex items-center justify-center pt-16 md:pt-20 overflow-hidden bg-gray-900 dark:bg-gray-100 transition-colors duration-500">
           {/* Animated Background */}
           <div className="absolute inset-0 overflow-hidden">
@@ -460,7 +468,7 @@ function Home() {
                 Transforming ideas into powerful web applications with MongoDB, Express.js, React, and Node.js
               </p>
 
-              {/* Tech Stack Badges - FIXED: Better mobile wrapping */}
+              {/* Tech Stack Badges */}
               <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-10 px-2">
                 <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
                   <FaReact className="text-blue-400 mr-1 md:mr-2" size={12} /> React
@@ -476,7 +484,7 @@ function Home() {
                 </span>
               </div>
 
-              {/* CTA Buttons - FIXED: Better mobile stacking */}
+              {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4 mb-8 md:mb-12 px-4">
                 <a
                   href="#contact"
@@ -519,7 +527,7 @@ function Home() {
           </div>
         </section>
 
-        {/* About Section - FIXED: Mobile padding and spacing */}
+        {/* About Section */}
         <section id="about" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10 md:mb-16">
@@ -559,7 +567,7 @@ function Home() {
                   by working on live projects and enterprise-level solutions.
                 </p>
 
-                {/* Stats - FIXED: Better mobile grid */}
+                {/* Stats */}
                 <div className="grid grid-cols-2 gap-3 md:gap-4 pt-4 md:pt-8">
                   <div className="p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-xl border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
                     <div className="text-2xl md:text-4xl font-bold text-indigo-400 dark:text-indigo-500">1+</div>
@@ -583,44 +591,121 @@ function Home() {
           </div>
         </section>
 
-        {/* Skills Section - FIXED: Mobile padding and grid */}
-        <section id="skills" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Skills Section - PREMIUM REDESIGN with UPDATED SKILLS */}
+        <section id="skills" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500 relative overflow-hidden">
+          {/* Premium Background Effects */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/10 dark:bg-indigo-400/10 rounded-full filter blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-20 right-10 w-72 h-72 bg-purple-600/10 dark:bg-purple-400/10 rounded-full filter blur-3xl animate-pulse animation-delay-2000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-600/5 dark:bg-pink-400/5 rounded-full filter blur-3xl animate-pulse animation-delay-4000"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-10 md:mb-16">
               <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
                 <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent dark:text-gray-900">
-                  Neetesh's Skills
+                  Technical Expertise
                 </span>
               </h2>
-              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full mb-4"></div>
+              <p className="text-sm md:text-base text-gray-400 dark:text-gray-600 max-w-2xl mx-auto">
+                Crafting digital experiences with modern technologies and best practices
+              </p>
             </div>
 
-            {/* Skill Categories */}
-            <div className="space-y-8 md:space-y-16">
+            {/* Skills Categories */}
+            <div className="space-y-8 md:space-y-12">
               {Object.entries(skills).map(([category, skillList]) => (
-                <div key={category} className="bg-gray-800/30 dark:bg-gray-200/30 rounded-2xl p-4 md:p-8 border border-gray-700 dark:border-gray-300 transition-colors duration-500">
-                  <h3 className="text-xl md:text-3xl font-semibold mb-4 md:mb-8 flex items-center capitalize text-gray-300 dark:text-gray-800">
-                    {category === 'frontend' && <FaReact className="text-blue-400 dark:text-blue-500 mr-2 md:mr-3" size={20} />}
-                    {category === 'backend' && <FaNodeJs className="text-green-400 dark:text-green-500 mr-2 md:mr-3" size={20} />}
-                    {category === 'database' && <FaDatabase className="text-yellow-400 dark:text-yellow-500 mr-2 md:mr-3" size={20} />}
-                    {category === 'devops' && <FaCloud className="text-blue-300 dark:text-blue-500 mr-2 md:mr-3" size={20} />}
-                    {category === 'tools' && <HiChip className="text-purple-400 dark:text-purple-500 mr-2 md:mr-3" size={20} />}
-                    {category} Expertise
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div key={category} className="group">
+                  {/* Category Header with Premium Design */}
+                  <div className="relative mb-6 md:mb-8">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
+                    <div className="relative flex items-center space-x-3 p-4 md:p-6 bg-gray-800/50 dark:bg-gray-200/50 backdrop-blur-sm rounded-xl border border-gray-700 dark:border-gray-300">
+                      {/* Category Icon */}
+                      <div className="p-3 md:p-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl shadow-lg">
+                        {category === 'frontend' && <FaReact className="text-white text-xl md:text-2xl" />}
+                        {category === 'backend' && <FaNodeJs className="text-white text-xl md:text-2xl" />}
+                        {category === 'database' && <FaDatabase className="text-white text-xl md:text-2xl" />}
+                        {category === 'devops' && <FaCloud className="text-white text-xl md:text-2xl" />}
+                        {category === 'tools' && <FaTools className="text-white text-xl md:text-2xl" />}
+                      </div>
+                      
+                      {/* Category Title */}
+                      <div className="flex-1">
+                        <h3 className="text-xl md:text-3xl font-bold capitalize flex items-center">
+                          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            {category} Technologies
+                          </span>
+                          <FaRocket className="ml-2 text-indigo-400 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300" size={16} />
+                        </h3>
+                        <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600 mt-1">
+                          {skillList.length} advanced {skillList.length === 1 ? 'skill' : 'skills'} mastered
+                        </p>
+                      </div>
+                      
+                      {/* Skill Count Badge */}
+                      <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
+                        {skillList.length}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Skills Grid - Premium Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     {skillList.map((skill, index) => (
-                      <div key={index} className="group relative">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg blur opacity-0 group-hover:opacity-30 transition"></div>
-                        <div className="relative p-3 md:p-5 bg-gray-800/50 dark:bg-gray-200/30 rounded-lg border border-gray-700 dark:border-gray-300 text-center transition-colors duration-500">
-                          <div className="text-2xl md:text-4xl mb-2 md:mb-3 flex justify-center text-gray-300 dark:text-gray-800">{skill.icon}</div>
-                          <h4 className="font-medium text-xs md:text-sm mb-1 md:mb-2 text-gray-300 dark:text-gray-800">{skill.name}</h4>
-                          <div className="mt-1 md:mt-2 w-full bg-gray-700 dark:bg-gray-300 rounded-full h-1 md:h-2">
-                            <div
-                              className={`bg-gradient-to-r ${skill.color} h-1 md:h-2 rounded-full`}
-                              style={{ width: `${skill.level}%` }}
-                            ></div>
+                      <div
+                        key={index}
+                        className="group/skill relative transform transition-all duration-500 hover:scale-105 hover:-translate-y-1"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        {/* Premium Card Design */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-0 group-hover/skill:opacity-50 transition duration-500"></div>
+                        
+                        <div className="relative h-full bg-gray-800/80 dark:bg-gray-200/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-gray-700 dark:border-gray-300 overflow-hidden">
+                          {/* Background Pattern */}
+                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-bl-full"></div>
+                          
+                          {/* Skill Icon with Glow Effect */}
+                          <div className="relative mb-3 flex justify-between items-start">
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-xl opacity-0 group-hover/skill:opacity-50 transition duration-500"></div>
+                              <div className="relative text-3xl md:text-4xl transform group-hover/skill:scale-110 group-hover/skill:rotate-3 transition-all duration-300">
+                                {skill.icon}
+                              </div>
+                            </div>
+                            
+                            {/* Level Badge */}
+                            <div className="px-2 py-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-xs font-bold text-white">
+                              {skill.level}%
+                            </div>
                           </div>
-                          <span className="text-[10px] md:text-xs text-indigo-400 dark:text-indigo-500 mt-1 md:mt-2 block">{skill.level}%</span>
+                          
+                          {/* Skill Name */}
+                          <h4 className="text-base md:text-lg font-bold mb-2 group-hover/skill:text-indigo-400 transition-colors">
+                            {skill.name}
+                          </h4>
+                          
+                          {/* Skill Description */}
+                          <p className="text-xs text-gray-400 dark:text-gray-600 mb-3 line-clamp-2">
+                            {skill.description}
+                          </p>
+                          
+                          {/* Progress Bar - Premium Style */}
+                          <div className="relative pt-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-semibold text-gray-400 dark:text-gray-600">Proficiency</span>
+                              <span className="text-xs font-bold text-indigo-400">{skill.level}%</span>
+                            </div>
+                            <div className="overflow-hidden h-1.5 bg-gray-700 dark:bg-gray-300 rounded-full">
+                              <div
+                                className={`h-full bg-gradient-to-r ${skill.color} rounded-full transform transition-all duration-1000 ease-out group-hover/skill:scale-x-105`}
+                                style={{ width: `${skill.level}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          
+                          {/* Hover Details */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-indigo-600/20 via-transparent to-transparent opacity-0 group-hover/skill:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                         </div>
                       </div>
                     ))}
@@ -628,10 +713,19 @@ function Home() {
                 </div>
               ))}
             </div>
+
+            {/* Additional Skills Badge */}
+            <div className="mt-12 text-center">
+              <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-800/50 dark:bg-gray-200/50 backdrop-blur-sm rounded-full border border-gray-700 dark:border-gray-300">
+                <HiLightningBolt className="text-yellow-400 animate-pulse" size={20} />
+                <span className="text-sm text-gray-300 dark:text-gray-700">Continuously learning and expanding my tech stack</span>
+                <HiLightningBolt className="text-yellow-400 animate-pulse" size={20} />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Projects Section - FIXED: Mobile grid and cards */}
+        {/* Projects Section */}
         <section id="projects" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10 md:mb-16">
@@ -703,7 +797,7 @@ function Home() {
           </div>
         </section>
 
-        {/* Contact Section - FIXED: Mobile padding */}
+        {/* Contact Section */}
         <section
           id="contact"
           className="py-16 md:py-24 bg-gradient-to-br from-indigo-900/30 via-purple-900/30 to-pink-900/30 dark:from-indigo-100/30 dark:via-purple-100/30 dark:to-pink-100/30 transition-colors duration-500"
@@ -720,7 +814,7 @@ function Home() {
 
             <div className="grid lg:grid-cols-2 gap-6 md:gap-12">
 
-              {/* Contact Info - FIXED: Mobile padding */}
+              {/* Contact Info */}
               <div className="space-y-4 md:space-y-6">
                 <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
                   <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Let's Connect</h3>
@@ -754,7 +848,7 @@ function Home() {
                 </div>
               </div>
 
-              {/* Contact Form - FIXED: Mobile padding */}
+              {/* Contact Form */}
               <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300 transition-colors duration-500">
                 <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Send Message</h3>
 
@@ -812,7 +906,7 @@ function Home() {
           </div>
         </section>
 
-        {/* Footer - FIXED: Mobile padding */}
+        {/* Footer */}
         <footer className="bg-gray-900 dark:bg-gray-100 py-4 md:py-8 border-t border-gray-800 dark:border-gray-300 transition-colors duration-500">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-xs md:text-base text-gray-400 dark:text-gray-700 transition-colors duration-500">
@@ -825,7 +919,7 @@ function Home() {
           </div>
         </footer>
 
-        {/* Scroll to Top - FIXED: Mobile positioning */}
+        {/* Scroll to Top */}
         {showScrollTop && (
           <button
             onClick={scrollToTop}
@@ -835,7 +929,8 @@ function Home() {
           </button>
         )}
       </div>
-      {/* Resume Modal - FIXED: Mobile modal */}
+
+      {/* Resume Modal */}
       {isResumeOpen && (
         <>
           {/* Overlay */}
@@ -888,8 +983,8 @@ function Home() {
                 </button>
 
                 <a
-                  href="/Resume_Neetesh.pdf"
-                  download={resume}
+                  href={resume}
+                  download="Resume_Neetesh.pdf"
                   className="px-4 py-1.5 md:px-6 md:py-2 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition-transform text-white font-medium flex items-center text-sm md:text-base"
                 >
                   <FaDownload className="mr-1 md:mr-2" size={12} /> Download
@@ -901,7 +996,7 @@ function Home() {
       )}
 
       {/* Animation Keyframes */}
-      <style jsx>{`
+      <style>{`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(30px, -50px) scale(1.1); }
