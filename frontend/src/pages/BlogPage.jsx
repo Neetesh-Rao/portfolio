@@ -23,7 +23,12 @@ function BlogPage() {
   useEffect(() => {
     const savedLikes = localStorage.getItem('likedBlogs');
     if (savedLikes) {
-      setLikedBlogs(JSON.parse(savedLikes));
+      try {
+        const parsedLikes = JSON.parse(savedLikes);
+        setLikedBlogs(parsedLikes);
+      } catch (e) {
+        console.error("Error parsing liked blogs:", e);
+      }
     }
   }, []);
 
@@ -41,8 +46,10 @@ function BlogPage() {
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [theme]);
 
@@ -121,8 +128,10 @@ function BlogPage() {
   };
 
   const handleLike = async (blogId, e) => {
-    e.preventDefault(); // Added this to prevent default behavior
-    e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     
     const isLiked = likedBlogs[blogId];
     const endpoint = isLiked ? 'unlike' : 'like';
@@ -151,8 +160,10 @@ function BlogPage() {
           toast.success("Liked! ❤️");
         }
         
-        // Force a new object reference to ensure React re-renders
+        // Force a re-render by creating a completely new object
         setLikedBlogs({ ...updatedLikedBlogs });
+        
+        // Also update localStorage
         localStorage.setItem('likedBlogs', JSON.stringify(updatedLikedBlogs));
 
         // Update selectedBlog if it's the current one
@@ -160,7 +171,7 @@ function BlogPage() {
           setSelectedBlog(prev => ({ ...prev, likes: data.likes }));
         }
         
-        // Update blogs list if we're on the listing page
+        // Update blogs list if we're on the listing page - THIS IS CRITICAL
         setBlogs(prevBlogs => 
           prevBlogs.map(blog => 
             blog._id === blogId 
@@ -168,6 +179,11 @@ function BlogPage() {
               : blog
           )
         );
+
+        // Force a re-render of the component
+        setTimeout(() => {
+          setLikedBlogs(current => ({ ...current }));
+        }, 100);
       } else {
         toast.error(data.message || (isLiked ? "Failed to unlike ❌" : "Failed to like ❌"));
       }
@@ -228,6 +244,11 @@ function BlogPage() {
     } finally {
       setCommentingBlogId(null);
     }
+  };
+
+  // Helper function to check if a blog is liked
+  const isBlogLiked = (blogId) => {
+    return likedBlogs && likedBlogs[blogId] === true;
   };
 
   // If we have a slug and selectedBlog, show single blog view
@@ -318,12 +339,12 @@ function BlogPage() {
                       className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition ${
                         likingBlogId === selectedBlog._id 
                           ? 'bg-gray-600 cursor-not-allowed'
-                          : likedBlogs[selectedBlog._id]
+                          : isBlogLiked(selectedBlog._id)
                             ? 'bg-pink-500/20 text-pink-500 hover:bg-pink-500/30'
                             : 'bg-gray-700/50 text-gray-400 hover:bg-pink-500/20 hover:text-pink-500'
                       }`}
                     >
-                      <FaHeart className={likedBlogs[selectedBlog._id] ? 'fill-current' : ''} size={18} />
+                      <FaHeart className={isBlogLiked(selectedBlog._id) ? 'fill-current' : ''} size={18} />
                       <span>{selectedBlog.likes || 0}</span>
                     </button>
                     
@@ -547,49 +568,49 @@ function BlogPage() {
                 {blogs.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-2 md:px-0">
                     {blogs.map((blog) => (
-                      <Link
-                        key={blog._id}
-                        to={`/blog/${blog.slug || blog._id}`}
-                        className="group relative cursor-pointer"
-                      >
+                      <div key={blog._id} className="group relative">
                         <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur-xl opacity-25 group-hover:opacity-50 transition"></div>
                         <div className="relative bg-gray-800/90 dark:bg-gray-200/90 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700 dark:border-gray-300 transition-all duration-300 transform group-hover:-translate-y-2">
-                          <div className="relative h-40 md:h-48 overflow-hidden bg-gray-700 dark:bg-gray-300">
-                            {blog.image ? (
-                              <img
-                                src={blog.image}
-                                alt={blog.title}
-                                className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
-                                <span className="text-3xl md:text-4xl">📝</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent dark:from-gray-200"></div>
-                            {blog.category && (
-                              <span className="absolute top-3 left-3 px-2 py-1 bg-indigo-600/90 dark:bg-indigo-500/90 backdrop-blur-sm rounded-full text-xs font-medium text-white">
-                                {blog.category}
-                              </span>
-                            )}
-                          </div>
-                          <div className="p-4 md:p-6">
-                            <div className="flex items-center space-x-3 md:space-x-4 text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-2 md:mb-3">
-                              <span className="flex items-center">
-                                <FaUser className="mr-1 text-indigo-400" size={10} />
-                                {blog.author || "Neetesh"}
-                              </span>
-                              <span className="flex items-center">
-                                <FaCalendarAlt className="mr-1 text-indigo-400" size={10} />
-                                {blog.date ? new Date(blog.date).toLocaleDateString() : new Date().toLocaleDateString()}
-                              </span>
+                          <Link to={`/blog/${blog.slug || blog._id}`}>
+                            <div className="relative h-40 md:h-48 overflow-hidden bg-gray-700 dark:bg-gray-300">
+                              {blog.image ? (
+                                <img
+                                  src={blog.image}
+                                  alt={blog.title}
+                                  className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
+                                  <span className="text-3xl md:text-4xl">📝</span>
+                                </div>
+                              )}
+                              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent dark:from-gray-200"></div>
+                              {blog.category && (
+                                <span className="absolute top-3 left-3 px-2 py-1 bg-indigo-600/90 dark:bg-indigo-500/90 backdrop-blur-sm rounded-full text-xs font-medium text-white">
+                                  {blog.category}
+                                </span>
+                              )}
                             </div>
-                            <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors line-clamp-2">
-                              {blog.title}
-                            </h3>
-                            <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-3 md:mb-4 line-clamp-3">
-                              {blog.excerpt}
-                            </p>
+                          </Link>
+                          <div className="p-4 md:p-6">
+                            <Link to={`/blog/${blog.slug || blog._id}`}>
+                              <div className="flex items-center space-x-3 md:space-x-4 text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-2 md:mb-3">
+                                <span className="flex items-center">
+                                  <FaUser className="mr-1 text-indigo-400" size={10} />
+                                  {blog.author || "Neetesh"}
+                                </span>
+                                <span className="flex items-center">
+                                  <FaCalendarAlt className="mr-1 text-indigo-400" size={10} />
+                                  {blog.date ? new Date(blog.date).toLocaleDateString() : new Date().toLocaleDateString()}
+                                </span>
+                              </div>
+                              <h3 className="text-lg md:text-xl font-bold mb-2 group-hover:text-indigo-400 dark:group-hover:text-indigo-500 transition-colors line-clamp-2">
+                                {blog.title}
+                              </h3>
+                              <p className="text-xs md:text-sm text-gray-400 dark:text-gray-600 mb-3 md:mb-4 line-clamp-3">
+                                {blog.excerpt}
+                              </p>
+                            </Link>
                             <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-gray-700 dark:border-gray-300">
                               <div className="flex items-center space-x-3 md:space-x-4">
                                 <button
@@ -602,7 +623,7 @@ function BlogPage() {
                                   className={`flex items-center space-x-1 transition ${
                                     likingBlogId === blog._id 
                                       ? 'text-gray-500 cursor-not-allowed' 
-                                      : likedBlogs[blog._id]
+                                      : isBlogLiked(blog._id)
                                         ? 'text-pink-500 hover:text-pink-600'
                                         : 'text-gray-400 dark:text-gray-600 hover:text-pink-500'
                                   }`}
@@ -611,16 +632,18 @@ function BlogPage() {
                                     className={`hover:scale-110 transition ${
                                       likingBlogId === blog._id ? 'animate-pulse' : ''
                                     } ${
-                                      likedBlogs[blog._id] ? 'fill-current' : ''
+                                      isBlogLiked(blog._id) ? 'fill-current' : ''
                                     }`} 
                                     size={12} 
                                   />
                                   <span className="text-xs md:text-sm">{blog.likes || 0}</span>
                                 </button>
-                                <span className="flex items-center space-x-1 text-gray-400 dark:text-gray-600">
-                                  <FaComment size={12} />
-                                  <span className="text-xs md:text-sm">{blog.comments?.length || 0}</span>
-                                </span>
+                                <Link to={`/blog/${blog.slug || blog._id}`} onClick={(e) => e.stopPropagation()}>
+                                  <span className="flex items-center space-x-1 text-gray-400 dark:text-gray-600 hover:text-indigo-400 transition">
+                                    <FaComment size={12} />
+                                    <span className="text-xs md:text-sm">{blog.comments?.length || 0}</span>
+                                  </span>
+                                </Link>
                               </div>
                               <button
                                 onClick={(e) => {
@@ -635,7 +658,7 @@ function BlogPage() {
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 ) : (
