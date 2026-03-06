@@ -101,7 +101,7 @@ function BlogPage() {
 
   // for sharing
   const handleShare = async (blog) => {
-    const shareUrl = `https://portfolio-csao.onrender.com/blog/${blog.slug || blog._id}`;
+    const shareUrl = `https://neeteshportfolio.vercel.app/blog/${blog.slug || blog._id}`;
 
     if (navigator.share) {
       try {
