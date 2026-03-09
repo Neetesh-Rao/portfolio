@@ -206,7 +206,7 @@ app.post("/api/blog/comment/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to add comment" });
   }
 });
-// app.put("/api/blog/unlike/:id", async (req, res) => {
+//unlike blog API
 //   try {
 //     const blog = await Blog.findById(req.params.id);
 
@@ -260,9 +260,6 @@ app.put("/api/blog/unlike/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to unlike blog" });
   }
 });
-/* ===============================
-   MONGODB CONNECTION
-================================= */
 
 const startServer = () => {
   app.listen(5000, () => {
