@@ -8,6 +8,7 @@ const slugify = require("slugify");
 require("dotenv").config();
 
 const Blog = require("./models/blog");
+const Visitor=require("./models/Visitor")
 
 const app = express();
 
@@ -285,6 +286,117 @@ app.get("/api/blog/slug/:slug", async (req, res) => {
   }
 });
 
+//visitor api
+// app.post('/api/visitor/track',async(req,res)=>{
+//   try{
+// const ip=req.headers["x-forwarded-for"]|| req.socket.remoteAddress;
+//  const userAgent = req.headers["user-agent"];
+//  await Visitor.create({
+//   ip,userAgent
+//  });
+//   const totalVisitors = await Visitor.countDocuments();
+//     res.json({ success: true, totalVisitors });
+//   }catch(err){
+//   res.status(500).json({ success: false });
+//   }
+// })
+//visitor api - UNIQUE VISITOR TRACKING (FIXED)
+app.post('/api/visitor/track', async (req, res) => {
+  try {
+    console.log("Visitor API Hit");
+   console.log("Headers:", req.headers);
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    const userAgent = req.headers["user-agent"];
+    
+    // Create a unique identifier
+    const visitorId = `${ip}-${userAgent}`;
+    
+    // Check if visitor already exists
+    let visitor = await Visitor.findOne({ 
+      $or: [
+        { ip: ip, userAgent: userAgent },
+        { visitorId: visitorId }
+      ]
+    });
+    
+    if (!visitor) {
+      // New unique visitor
+      await Visitor.create({
+        ip,
+        userAgent,
+        visitorId,
+        firstVisit: new Date(),
+        lastVisit: new Date(),
+        visitCount: 1
+      });
+      console.log("✅ New visitor recorded");
+    } else {
+      // Existing visitor - update last visit and count
+      visitor.lastVisit = new Date();
+      visitor.visitCount += 1;
+      await visitor.save();
+      console.log("🔄 Existing visitor updated");
+    }
+    
+    // Get total unique visitors
+    const totalVisitors = await Visitor.countDocuments();
+    console.log("Total unique visitors:", totalVisitors);
+
+    res.json({ 
+      success: true, 
+      totalVisitors,
+      isNewVisitor: !visitor 
+    });
+
+  } catch (err) {
+    console.error("❌ Visitor API Error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Get visitor count without tracking
+app.get("/api/visitor/count", async (req, res) => {
+  try {
+
+    const totalVisitors = await Visitor.countDocuments();
+
+    res.json({
+      success: true,
+      totalVisitors
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false });
+  }
+});
+// Add this after your visitor routes
+app.get('/api/visitor/stats', async (req, res) => {
+  try {
+    const now = new Date();
+    const today = new Date(now.setHours(0, 0, 0, 0));
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const [todayCount, weekCount, monthCount] = await Promise.all([
+      Visitor.countDocuments({ lastVisit: { $gte: today } }),
+      Visitor.countDocuments({ lastVisit: { $gte: weekAgo } }),
+      Visitor.countDocuments({ lastVisit: { $gte: monthAgo } })
+    ]);
+
+    res.json({
+      success: true,
+      stats: {
+        today: todayCount,
+        week: weekCount,
+        month: monthCount
+      }
+    });
+  } catch (err) {
+    console.error("Stats error:", err);
+    res.status(500).json({ success: false });
+  }
+});
 mongoose
   .connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 15000,
