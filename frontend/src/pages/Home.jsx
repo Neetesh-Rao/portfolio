@@ -25,7 +25,8 @@ import {
   FaCode,
   FaLaptopCode,
   FaTools,
-  FaRocket
+  FaRocket,
+  FaVideo
 } from 'react-icons/fa';
 
 import {
@@ -41,7 +42,8 @@ import {
   SiMysql,
   SiSocketdotio,
   SiRender,
-  SiVercel
+  SiVercel,
+  SiWebrtc
 } from 'react-icons/si';
 import { HiMenu, HiX, HiChip, HiLightningBolt } from 'react-icons/hi';
 import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
@@ -85,7 +87,7 @@ function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Skills Data - UPDATED with Vercel added, Redis removed
+  // Skills Data - UPDATED with WebRTC added
   const skills = {
     frontend: [
       { name: 'HTML5', icon: <SiHtml5 className="text-orange-500" />, level: 95, color: 'from-orange-400 to-orange-600', description: 'Semantic markup, SEO optimization' },
@@ -103,6 +105,7 @@ function Home() {
       { name: 'REST APIs', icon: <FaServer className="text-orange-400" />, level: 94, color: 'from-orange-400 to-orange-600', description: 'API design, CRUD operations' },
       { name: 'JWT Auth', icon: <SiJsonwebtokens className="text-yellow-500" />, level: 90, color: 'from-yellow-400 to-yellow-600', description: 'Authentication, authorization' },
       { name: 'Socket.io', icon: <SiSocketdotio className="text-white dark:text-gray-800" />, level: 80, color: 'from-gray-600 to-gray-800', description: 'Real-time bidirectional communication' },
+      { name: 'WebRTC', icon: <SiWebrtc className="text-blue-400" />, level: 75, color: 'from-blue-400 to-blue-600', description: 'Peer-to-peer video/audio communication, data channels' },
     ],
 
     database: [
@@ -482,6 +485,9 @@ function Home() {
                 <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
                   <SiMongodb className="text-green-500 mr-1 md:mr-2" size={12} /> MongoDB
                 </span>
+                <span className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-800/50 dark:bg-gray-200/30 rounded-full text-xs md:text-sm border border-gray-700 dark:border-gray-300 flex items-center text-gray-300 dark:text-gray-900">
+                  <SiWebrtc className="text-blue-400 mr-1 md:mr-2" size={12} /> WebRTC
+                </span>
               </div>
 
               {/* CTA Buttons */}
@@ -564,7 +570,8 @@ function Home() {
 
                 <p className="text-sm md:text-base text-gray-400 dark:text-gray-700 leading-relaxed">
                   I am passionate about writing clean, scalable code and continuously improving my development skills
-                  by working on live projects and enterprise-level solutions.
+                  by working on live projects and enterprise-level solutions. I also work with WebRTC for implementing
+                  real-time video/audio communication features in web applications.
                 </p>
 
                 {/* Stats */}
@@ -591,7 +598,7 @@ function Home() {
           </div>
         </section>
 
-        {/* Skills Section - PREMIUM REDESIGN with UPDATED SKILLS */}
+        {/* Skills Section - PREMIUM REDESIGN with UPDATED SKILLS including WebRTC */}
         <section id="skills" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500 relative overflow-hidden">
           {/* Premium Background Effects */}
           <div className="absolute inset-0 overflow-hidden">
@@ -609,7 +616,7 @@ function Home() {
               </h2>
               <div className="w-20 md:w-28 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full mb-4"></div>
               <p className="text-sm md:text-base text-gray-400 dark:text-gray-600 max-w-2xl mx-auto">
-                Crafting digital experiences with modern technologies and best practices
+                Crafting digital experiences with modern technologies and best practices including WebRTC for real-time communication
               </p>
             </div>
 
@@ -718,7 +725,7 @@ function Home() {
             <div className="mt-12 text-center">
               <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-800/50 dark:bg-gray-200/50 backdrop-blur-sm rounded-full border border-gray-700 dark:border-gray-300">
                 <HiLightningBolt className="text-yellow-400 animate-pulse" size={20} />
-                <span className="text-sm text-gray-300 dark:text-gray-700">Continuously learning and expanding my tech stack</span>
+                <span className="text-sm text-gray-300 dark:text-gray-700">Continuously learning and expanding my tech stack including WebRTC for real-time apps</span>
                 <HiLightningBolt className="text-yellow-400 animate-pulse" size={20} />
               </div>
             </div>
