@@ -359,7 +359,7 @@ function Home() {
       // Example: https://github.com/Neetesh-Rao/WandarLust -> Neetesh-Rao/WandarLust
       const repoPath = project.github.replace('https://github.com/', '');
       
-      const response = await fetch('http://localhost:5000/api/explain-project', {
+      const response = await fetch('https://portfolio-csao.onrender.com/api/explain-project', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
