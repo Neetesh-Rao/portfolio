@@ -6,6 +6,7 @@ const dns = require("dns");
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 require("dotenv").config();
+const axios = require("axios");
 
 const Blog = require("./models/blog");
 const Visitor=require("./models/Visitor")
@@ -484,6 +485,106 @@ app.post("/api/questions", async (req, res) => {
       success: false,
       message: error.message
     });
+  }
+});
+//explanin repo
+// ===========================================
+// AI PROJECT EXPLANATION ROUTE - FIXED VERSION
+// ===========================================
+// AI PROJECT EXPLANATION - USER FRIENDLY VERSION
+// ===========================================
+app.post("/api/explain-project", async (req, res) => {
+  try {
+    const { repo } = req.body;
+    
+    if (!repo) {
+      return res.status(400).json({ error: "Repository name is required" });
+    }
+
+    console.log("🔍 Fetching repo:", repo);
+
+    // 1️⃣ GitHub se repo details
+    const repoInfo = await axios.get(`https://api.github.com/repos/${repo}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    
+    // 2️⃣ README fetch karo
+    let readmeContent = "No README found";
+    try {
+      const readme = await axios.get(`https://api.github.com/repos/${repo}/readme`, {
+        headers: { 
+          Accept: "application/vnd.github.raw",
+          'User-Agent': 'Mozilla/5.0'
+        }
+      });
+      readmeContent = readme.data.substring(0, 1500);
+    } catch (readmeError) {
+      console.log("📝 README not found");
+    }
+    
+    const projectData = `
+Project Name: ${repoInfo.data.name}
+Description: ${repoInfo.data.description || 'No description'}
+Stars: ${repoInfo.data.stargazers_count || 0}
+Language: ${repoInfo.data.language || 'Unknown'}
+Topics: ${(repoInfo.data.topics || []).join(', ') || 'None'}
+
+README Preview:
+${readmeContent}`;
+    
+    console.log("🤖 Sending to Gemini API...");
+
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      return res.status(500).json({ error: "GEMINI_API_KEY not configured" });
+    }
+
+    // ✅ SIMPLE PROMPT - Easy to understand
+    const prompt = `You are a friendly tech mentor. Explain this GitHub project in VERY SIMPLE language that even a beginner can understand.
+
+Project Details:
+${projectData}
+
+Please explain in this format:
+
+🎯 PROJECT OVERVIEW (1-2 lines)
+[Simple explanation of what this project does]
+
+✨ MAIN FEATURES
+• [Feature 1 - simple words]
+• [Feature 2 - simple words]
+• [Feature 3 - simple words]
+
+🛠️ TECHNOLOGIES USED
+• [Tech 1] - [what it does in simple words]
+• [Tech 2] - [what it does in simple words]
+
+💡 HOW IT WORKS (2-3 lines)
+[Simple explanation of the architecture]
+
+🌟 WHY IT'S COOL
+[Why this project is impressive - simple terms]
+
+Keep it friendly, use emojis, and avoid technical jargon!`;
+
+    // ✅ FIX: Use correct model name (gemini-1.5-flash)
+    const aiResponse = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: prompt }] }]
+      }
+    );
+    
+    const result = aiResponse.data.candidates[0].content.parts[0].text;
+    
+    res.json({ 
+      success: true,
+      explanation: result 
+    });
+    
+  } catch (error) {
+    console.error("❌ Error:", error.message);
+    res.status(500).json({ error: "Failed to analyze repository" });
   }
 });
 mongoose

@@ -4,10 +4,13 @@ import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import BlogPage from "./pages/BlogPage";
 import QuestionsPage from "./pages/Questions";   // add this
+import ErrorBoundary from './pages/ErrorBoundary';
 
 function App() {
   return (
     <>
+        <ErrorBoundary>
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminLogin />} />
@@ -19,6 +22,7 @@ function App() {
         <Route path="/questions" element={<QuestionsPage />} />
 
       </Routes>
+         </ErrorBoundary>
     </>
   );
 }
