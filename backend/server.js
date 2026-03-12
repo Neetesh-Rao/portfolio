@@ -583,9 +583,15 @@ Keep it friendly, use emojis, and avoid technical jargon!`;
     });
     
   } catch (error) {
-    console.error("❌ Error:", error.message);
-    res.status(500).json({ error: "Failed to analyze repository" });
-  }
+
+ console.log("FULL ERROR:", error.response?.data || error.message);
+
+ res.status(500).json({
+  error: "Failed to analyze repository",
+  details: error.response?.data || error.message
+ });
+
+}
 });
 mongoose
   .connect(process.env.MONGO_URI, {
