@@ -504,10 +504,12 @@ app.post("/api/explain-project", async (req, res) => {
     console.log("🔍 Fetching repo:", repo);
 
     // 1️⃣ GitHub se repo details
-    const repoInfo = await axios.get(`https://api.github.com/repos/${repo}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    });
-    
+       const repoInfo = await axios.get(`https://api.github.com/repos/${repo}`, {
+  headers: { 
+    'User-Agent': 'Portfolio-App',
+    Authorization: `Bearer ${process.env.PORTFOLIO_GITHUB_TOKEN}`
+  }
+});
     // 2️⃣ README fetch karo
     let readmeContent = "No README found";
     try {
