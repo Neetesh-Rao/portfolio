@@ -511,12 +511,18 @@ app.post("/api/explain-project", async (req, res) => {
     // 2️⃣ README fetch karo
     let readmeContent = "No README found";
     try {
-      const readme = await axios.get(`https://api.github.com/repos/${repo}/readme`, {
-        headers: { 
-          Accept: "application/vnd.github.raw",
-          'User-Agent': 'Mozilla/5.0'
-        }
-      });
+      // const readme = await axios.get(`https://api.github.com/repos/${repo}/readme`, {
+      //   headers: { 
+      //     Accept: "application/vnd.github.raw",
+      //     'User-Agent': 'Mozilla/5.0'
+      //   }
+      // });
+      const repoInfo = await axios.get(`https://api.github.com/repos/${repo}`, {
+  headers: { 
+    'User-Agent': 'Portfolio-App',
+    Authorization: `Bearer ${process.env.PORTFOLIO_GITHUB_TOKEN}`
+  }
+});
       readmeContent = readme.data.substring(0, 1500);
     } catch (readmeError) {
       console.log("📝 README not found");
@@ -583,9 +589,15 @@ Keep it friendly, use emojis, and avoid technical jargon!`;
     });
     
   } catch (error) {
-    console.error("❌ Error:", error.message);
-    res.status(500).json({ error: "Failed to analyze repository" });
-  }
+
+ console.log("FULL ERROR:", error.response?.data || error.message);
+
+ res.status(500).json({
+  error: "Failed to analyze repository",
+  details: error.response?.data || error.message
+ });
+
+}
 });
 mongoose
   .connect(process.env.MONGO_URI, {
