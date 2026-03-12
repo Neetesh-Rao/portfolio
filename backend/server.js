@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const Blog = require("./models/blog");
 const Visitor=require("./models/Visitor")
+const DSAQuestion=require('./models/DSAQuestion');
 
 const app = express();
 
@@ -207,30 +208,7 @@ app.post("/api/blog/comment/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to add comment" });
   }
 });
-//unlike blog API
-//   try {
-//     const blog = await Blog.findById(req.params.id);
-
-//     if (!blog) {
-//       return res.status(404).json({ message: "Blog not found" });
-//     }
-
-//     // likes 0 se niche na jaye
-//     if (blog.likes > 0) {
-//       blog.likes -= 1;
-//     }
-
-//     await blog.save();
-
-//     res.json({
-//       message: "Blog unliked",
-//       likes: blog.likes
-//     });
-
-//   } catch (err) {
-//     res.status(500).json({ message: "Failed to unlike blog" });
-//   }
-// });
+//unlike 
 app.put("/api/blog/unlike/:id", async (req, res) => {
   try {
 
@@ -286,21 +264,7 @@ app.get("/api/blog/slug/:slug", async (req, res) => {
   }
 });
 
-//visitor api
-// app.post('/api/visitor/track',async(req,res)=>{
-//   try{
-// const ip=req.headers["x-forwarded-for"]|| req.socket.remoteAddress;
-//  const userAgent = req.headers["user-agent"];
-//  await Visitor.create({
-//   ip,userAgent
-//  });
-//   const totalVisitors = await Visitor.countDocuments();
-//     res.json({ success: true, totalVisitors });
-//   }catch(err){
-//   res.status(500).json({ success: false });
-//   }
-// })
-//visitor api - UNIQUE VISITOR TRACKING (FIXED)
+
 app.post('/api/visitor/track', async (req, res) => {
   try {
     console.log("Visitor API Hit");
@@ -395,6 +359,131 @@ app.get('/api/visitor/stats', async (req, res) => {
   } catch (err) {
     console.error("Stats error:", err);
     res.status(500).json({ success: false });
+  }
+});
+
+//fetch questions 
+app.get("/api/questions", async (req, res) => {
+  try {
+
+    const questions = await DSAQuestion.find();
+
+    res.json({
+      success: true,
+      totalQuestions: questions.length,
+      data: questions
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+});
+//Get Questions According to Difficulty
+app.get("/api/questions/difficulty/:difficulty", async (req, res) => {
+
+  try {
+
+    const difficulty = req.params.difficulty.toLowerCase();
+
+    const questions = await DSAQuestion.find({ difficulty });
+
+    res.json({
+      success: true,
+      totalQuestions: questions.length,
+      data: questions
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+});
+//Validate Solution API
+app.post("/api/questions/validate/:id", async (req, res) => {
+
+  try {
+
+    const { answer } = req.body;
+
+    const question = await DSAQuestion.findById(req.params.id);
+
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: "Question not found"
+      });
+    }
+
+    const isCorrect = Number(answer) === question.correctAnswer;
+
+    res.json({
+      success: true,
+      correct: isCorrect,
+      message: isCorrect ? "Correct Answer 🎉" : "Wrong Answer ❌"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+});
+
+// Create new question
+app.post("/api/questions", async (req, res) => {
+  try {
+
+    const { question, options, correctAnswer, explanation, difficulty } = req.body;
+
+    if (!question || !options || correctAnswer === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Question, options and correctAnswer are required"
+      });
+    }
+
+    if (options.length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "At least 2 options required"
+      });
+    }
+
+    const newQuestion = new DSAQuestion({
+      question,
+      options,
+      correctAnswer,
+      explanation,
+      difficulty
+    });
+
+    const saved = await newQuestion.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Question created successfully",
+      data: saved
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 });
 mongoose

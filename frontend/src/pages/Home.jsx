@@ -29,7 +29,9 @@ import {
   FaVideo,
   FaEye
 } from 'react-icons/fa';
-
+// Line 23 ke baad ye import add karo
+import { useNavigate } from 'react-router-dom';
+import { FaQuestionCircle } from 'react-icons/fa'; // ya koi bhi icon
 import {
   SiMongodb,
   SiExpress,
@@ -57,6 +59,7 @@ import wandarlust from '/wandarlust.png'
 import resume from '/Resume_Neetesh.pdf'
 
 function Home() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [visitorCount, setVisitorCount] = useState(0);
@@ -375,6 +378,20 @@ function Home() {
 
                 {/* Admin & Blog Links */}
                 <div className="flex items-center space-x-2 ml-2">
+                   <button
+    onClick={() => navigate('/questions')}
+    className="relative group"
+    title="Practice Questions"
+  >
+    <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+    <div className="relative flex items-center space-x-2 px-4 py-2.5 bg-gray-800/90 dark:bg-gray-200/90 rounded-xl border border-gray-700 dark:border-gray-300 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 dark:from-green-400/20 dark:to-emerald-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+      <FaQuestionCircle className="relative text-green-400 dark:text-green-500 group-hover:scale-110 transition-transform" size={16} />
+      <span className="relative text-sm font-medium text-gray-300 dark:text-gray-700 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-green-400 group-hover:to-emerald-400 group-hover:bg-clip-text">
+        Questions
+      </span>
+    </div>
+  </button>
                   <Link
                     to="/admin"
                     className="relative group"
@@ -458,6 +475,16 @@ function Home() {
 
               {/* Mobile Admin & Blog Links */}
               <div className="px-4 py-2 space-y-2">
+                <button
+    onClick={() => {
+      navigate('/questions');
+      setIsMenuOpen(false);
+    }}
+    className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300 w-full text-left"
+  >
+    <FaQuestionCircle className="text-green-400" size={16} />
+    <span className="text-sm text-gray-300 dark:text-gray-700 font-medium">Practice Questions</span>
+  </button>
                 <Link
                   to="/admin"
                   className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
