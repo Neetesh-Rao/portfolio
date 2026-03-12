@@ -110,9 +110,9 @@ function Questions() {
       setLoading(true);
       setError(null);
       
-      let url = 'http://localhost:5000/api/questions';
+      let url = 'https://portfolio-csao.onrender.com/api/questions';
       if (diff !== 'all') {
-        url = `http://localhost:5000/api/questions/difficulty/${diff}`;
+        url = `https://portfolio-csao.onrender.com/api/questions/difficulty/${diff}`;
       }
       
       const response = await fetch(url);
@@ -171,7 +171,7 @@ function Questions() {
     try {
       setValidationLoading(true);
       
-      const response = await fetch(`http://localhost:5000/api/questions/validate/${currentQ._id}`, {
+      const response = await fetch(`https://portfolio-csao.onrender.com/api/questions/validate/${currentQ._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
