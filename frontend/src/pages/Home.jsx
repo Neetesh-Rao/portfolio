@@ -359,7 +359,7 @@ function Home() {
       // Example: https://github.com/Neetesh-Rao/WandarLust -> Neetesh-Rao/WandarLust
       const repoPath = project.github.replace('https://github.com/', '');
       
-      const response = await fetch(`https://portfolio-csao.onrender.com/api/explain-project`, {
+      const response = await fetch(`http://localhost:5000/api/explain-project`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1139,198 +1139,192 @@ function Home() {
       </div>
 
         {/* 🆕 AI EXPLANATION MODAL */}
-      {showAIModal && (
-        <>
-          {/* Backdrop */}
-          <div
-            onClick={closeAIModal}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-300"
-          />
-          
-          {/* Modal */}
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="relative w-full max-w-3xl max-h-[85vh] bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-purple-500/30 shadow-2xl animate-[fadeInScale_.3s_ease-out] overflow-hidden">
-              
-              {/* Header */}
-             {/* Header */}
-<div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gradient-to-r from-purple-600/30 to-pink-600/30">
-  <div className="flex items-center space-x-2 sm:space-x-3">
-    <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-lg">
-      <GiArtificialHive className="text-white text-lg sm:text-xl" />
-    </div>
-    <div>
-      <h2 className="text-base sm:text-xl font-bold text-white flex items-center">
-        AI Project Analysis
-        <span className="ml-2 text-[10px] sm:text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-300">
-          Beta
-        </span>
-      </h2>
-      <p className="text-xs sm:text-sm text-gray-400 flex items-center">
-        <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-2"></span>
-        {selectedProject?.title}
-      </p>
-    </div>
-  </div>
-  <button
-    onClick={closeAIModal}
-    className="p-1.5 sm:p-2 hover:bg-gray-700 rounded-lg transition-colors group"
-    title="Close"
-  >
-    <FaTimes className="text-gray-400 group-hover:text-white text-sm sm:text-base" size={16} />
-  </button>
-</div>
-
-              {/* Content */}
-             {/* Content */}
-<div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(85vh-120px)]">
-  {aiLoading ? (
-    <div className="flex flex-col items-center justify-center py-8 sm:py-12">
-      <div className="relative">
-        <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-2 border-b-2 border-purple-500"></div>
-        <GiArtificialHive className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-purple-400 text-xl sm:text-2xl" />
-      </div>
-      <p className="text-gray-400 mt-4 text-sm sm:text-base">🤖 AI is thinking...</p>
-      <p className="text-xs text-gray-500 mt-2">Analyzing GitHub repository</p>
-    </div>
-  ) : aiError ? (
-    <div className="text-center py-8 sm:py-12">
-      <div className="text-4xl sm:text-6xl mb-4">😕</div>
-      <h3 className="text-lg sm:text-xl text-red-400 font-semibold mb-2">Oops! Something went wrong</h3>
-      <p className="text-sm sm:text-base text-gray-400 mb-4 px-4">{aiError}</p>
-      <button
-        onClick={() => getAIExplanation(selectedProject)}
-        className="px-4 sm:px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:shadow-lg transition text-sm sm:text-base"
-      >
-        Try Again
-      </button>
-    </div>
-  ) : (
-    <div className="space-y-4 sm:space-y-6">
-      {/* AI Explanation with nice formatting */}
-      <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
-        <div className="flex items-center space-x-2 mb-3 sm:mb-4 border-b border-purple-500/20 pb-2 sm:pb-3">
-          <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
-            <FaRobot className="text-white text-sm sm:text-base" />
-          </div>
-          <span className="text-purple-400 font-semibold text-sm sm:text-base">AI Project Explanation</span>
-        </div>
+      {/* 🆕 AI EXPLANATION MODAL - FIXED VERSION */}
+{showAIModal && (
+  <>
+    {/* Backdrop */}
+    <div
+      onClick={closeAIModal}
+      className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-300"
+    />
+    
+    {/* Modal Container - WITH FLEX COLUMN LAYOUT */}
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+      <div className="relative w-full max-w-3xl max-h-[90vh] bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-purple-500/30 shadow-2xl animate-[fadeInScale_.3s_ease-out] overflow-hidden flex flex-col">
         
-        {/* Formatted Explanation */}
-        <div className="text-gray-300 text-xs sm:text-sm leading-relaxed space-y-3">
-          {aiExplanation.split('\n').map((line, i) => {
-            // Check for headings (lines with ** or emojis)
-            if (line.includes('🎯') || line.includes('✨') || line.includes('🛠️') || 
-                line.includes('💡') || line.includes('🌟') || line.includes('**')) {
-              return (
-                <h3 key={i} className="text-sm sm:text-base font-bold text-purple-400 mt-4 mb-2 flex items-center">
-                  {line.includes('🎯') && <span className="mr-2">🎯</span>}
-                  {line.includes('✨') && <span className="mr-2">✨</span>}
-                  {line.includes('🛠️') && <span className="mr-2">🛠️</span>}
-                  {line.includes('💡') && <span className="mr-2">💡</span>}
-                  {line.includes('🌟') && <span className="mr-2">🌟</span>}
-                  <span>{line.replace(/[🎯✨🛠️💡🌟*]/g, '').trim()}</span>
-                </h3>
-              );
-            }
-            // Check for bullet points
-            else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-              return (
-                <li key={i} className="ml-4 sm:ml-6 text-gray-300 list-disc text-xs sm:text-sm">
-                  {line.replace(/[•-]/, '').trim()}
-                </li>
-              );
-            }
-            // Regular text
-            else if (line.trim() !== '') {
-              return <p key={i} className="mb-2 text-xs sm:text-sm">{line}</p>;
-            }
-            return null;
-          })}
-        </div>
-      </div>
-
-      {/* Project Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
+        {/* Header - Fixed at top */}
+        <div className="flex-shrink-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gradient-to-r from-purple-600/30 to-pink-600/30">
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="p-2 bg-gray-700 rounded-lg">
-              <FaGithub className="text-gray-400 text-base sm:text-xl" />
+            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-lg">
+              <GiArtificialHive className="text-white text-lg sm:text-xl" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500">Repository</p>
-              <a 
-                href={selectedProject?.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
-                title={selectedProject?.github}
-              >
-                {selectedProject?.github.split('/').slice(-2).join('/')}
-              </a>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-white flex items-center">
+                AI Project Analysis
+                <span className="ml-2 text-[10px] sm:text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-300">
+                  Beta
+                </span>
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-400 flex items-center">
+                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-2"></span>
+                {selectedProject?.title}
+              </p>
             </div>
           </div>
+          <button
+            onClick={closeAIModal}
+            className="p-1.5 sm:p-2 hover:bg-gray-700 rounded-lg transition-colors group"
+            title="Close"
+          >
+            <FaTimes className="text-gray-400 group-hover:text-white text-sm sm:text-base" size={16} />
+          </button>
         </div>
 
-        <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="p-2 bg-gray-700 rounded-lg">
-              <FaExternalLinkAlt className="text-gray-400 text-base sm:text-xl" />
+        {/* Content - Scrollable area */}
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+          {aiLoading ? (
+            <div className="flex flex-col items-center justify-center py-8 sm:py-12">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-2 border-b-2 border-purple-500"></div>
+                <GiArtificialHive className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-purple-400 text-xl sm:text-2xl" />
+              </div>
+              <p className="text-gray-400 mt-4 text-sm sm:text-base">🤖 AI is thinking...</p>
+              <p className="text-xs text-gray-500 mt-2">Analyzing GitHub repository</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500">Live Demo</p>
-              <a 
-                href={selectedProject?.live}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
-                title={selectedProject?.live}
+          ) : aiError ? (
+            <div className="text-center py-8 sm:py-12">
+              <div className="text-4xl sm:text-6xl mb-4">😕</div>
+              <h3 className="text-lg sm:text-xl text-red-400 font-semibold mb-2">Oops! Something went wrong</h3>
+              <p className="text-sm sm:text-base text-gray-400 mb-4 px-4">{aiError}</p>
+              <button
+                onClick={() => getAIExplanation(selectedProject)}
+                className="px-4 sm:px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:shadow-lg transition text-sm sm:text-base"
               >
-                {selectedProject?.live.replace('https://', '').substring(0, 25)}...
-              </a>
+                Try Again
+              </button>
             </div>
-          </div>
-        </div>
-      </div>
+          ) : (
+            <div className="space-y-4 sm:space-y-6">
+              {/* AI Explanation */}
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
+                <div className="flex items-center space-x-2 mb-3 sm:mb-4 border-b border-purple-500/20 pb-2 sm:pb-3">
+                  <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
+                    <FaRobot className="text-white text-sm sm:text-base" />
+                  </div>
+                  <span className="text-purple-400 font-semibold text-sm sm:text-base">AI Project Explanation</span>
+                </div>
+                
+                {/* Formatted Explanation */}
+                <div className="text-gray-300 text-xs sm:text-sm leading-relaxed space-y-3">
+                  {aiExplanation.split('\n').map((line, i) => {
+                    if (line.includes('🎯') || line.includes('✨') || line.includes('🛠️') || 
+                        line.includes('💡') || line.includes('🌟') || line.includes('**')) {
+                      return (
+                        <h3 key={i} className="text-sm sm:text-base font-bold text-purple-400 mt-4 mb-2 flex items-center">
+                          {line.includes('🎯') && <span className="mr-2">🎯</span>}
+                          {line.includes('✨') && <span className="mr-2">✨</span>}
+                          {line.includes('🛠️') && <span className="mr-2">🛠️</span>}
+                          {line.includes('💡') && <span className="mr-2">💡</span>}
+                          {line.includes('🌟') && <span className="mr-2">🌟</span>}
+                          <span>{line.replace(/[🎯✨🛠️💡🌟*]/g, '').trim()}</span>
+                        </h3>
+                      );
+                    }
+                    else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                      return (
+                        <li key={i} className="ml-4 sm:ml-6 text-gray-300 list-disc text-xs sm:text-sm">
+                          {line.replace(/[•-]/, '').trim()}
+                        </li>
+                      );
+                    }
+                    else if (line.trim() !== '') {
+                      return <p key={i} className="mb-2 text-xs sm:text-sm">{line}</p>;
+                    }
+                    return null;
+                  })}
+                </div>
+              </div>
 
-      {/* Tech Stack Section */}
-      <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
-        <p className="text-xs sm:text-sm text-gray-400 mb-2 flex items-center">
-          <span className="mr-2">🛠️</span> Technologies Used:
-        </p>
-        <div className="flex flex-wrap gap-1.5 sm:gap-2">
-          {selectedProject?.tech.map((tech, i) => (
-            <span 
-              key={i} 
-              className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full text-[10px] sm:text-xs text-purple-400 border border-purple-500/30 shadow-lg"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-      </div>
+              {/* Project Stats Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="p-2 bg-gray-700 rounded-lg">
+                      <FaGithub className="text-gray-400 text-base sm:text-xl" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">Repository</p>
+                      <a 
+                        href={selectedProject?.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
+                      >
+                        {selectedProject?.github.split('/').slice(-2).join('/')}
+                      </a>
+                    </div>
+                  </div>
+                </div>
 
-      {/* Project Description */}
-      <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
-        <p className="text-xs sm:text-sm text-gray-400 mb-1">📝 Description:</p>
-        <p className="text-xs sm:text-sm text-gray-300">{selectedProject?.description}</p>
-      </div>
-    </div>
-  )}
-</div>
+                <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="p-2 bg-gray-700 rounded-lg">
+                      <FaExternalLinkAlt className="text-gray-400 text-base sm:text-xl" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500">Live Demo</p>
+                      <a 
+                        href={selectedProject?.live}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
+                      >
+                        {selectedProject?.live.replace('https://', '').substring(0, 25)}...
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-              {/* Footer */}
-              <div className="flex justify-end px-6 py-4 border-t border-gray-700 bg-gray-900/50">
-                <button
-                  onClick={closeAIModal}
-                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-                >
-                  Close
-                </button>
+              {/* Tech Stack Section */}
+              <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
+                <p className="text-xs sm:text-sm text-gray-400 mb-2 flex items-center">
+                  <span className="mr-2">🛠️</span> Technologies Used:
+                </p>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  {selectedProject?.tech.map((tech, i) => (
+                    <span 
+                      key={i} 
+                      className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full text-[10px] sm:text-xs text-purple-400 border border-purple-500/30 shadow-lg"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Project Description */}
+              <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
+                <p className="text-xs sm:text-sm text-gray-400 mb-1">📝 Description:</p>
+                <p className="text-xs sm:text-sm text-gray-300">{selectedProject?.description}</p>
               </div>
             </div>
-          </div>
-        </>
-      )}
+          )}
+        </div>
+
+        {/* Footer - Fixed at bottom */}
+        <div className="flex-shrink-0 flex justify-end px-6 py-4 border-t border-gray-700 bg-gray-900/50">
+          <button
+            onClick={closeAIModal}
+            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </>
+)}
 
       {/* Resume Modal */}
       {isResumeOpen && (
