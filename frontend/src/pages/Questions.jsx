@@ -66,7 +66,6 @@ function Questions() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch questions on mount
   useEffect(() => {
     fetchQuestions();
   }, []);
