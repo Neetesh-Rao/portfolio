@@ -48,6 +48,7 @@ function Questions() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileStats, setShowMobileStats] = useState(false);
+  const [showQuickJump, setShowQuickJump] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Check screen size on resize
@@ -57,6 +58,7 @@ function Questions() {
       if (window.innerWidth >= 768) {
         setShowMobileMenu(false);
         setShowMobileStats(false);
+        setShowQuickJump(false);
       }
     };
 
@@ -108,9 +110,9 @@ function Questions() {
       setLoading(true);
       setError(null);
       
-      let url = 'https://portfolio-csao.onrender.com/api/questions';
+      let url = 'http://localhost:5000/api/questions';
       if (diff !== 'all') {
-        url = `https://portfolio-csao.onrender.com/api/questions/difficulty/${diff}`;
+        url = `http://localhost:5000/api/questions/difficulty/${diff}`;
       }
       
       const response = await fetch(url);
@@ -169,7 +171,7 @@ function Questions() {
     try {
       setValidationLoading(true);
       
-      const response = await fetch(`https://portfolio-csao.onrender.com/api/questions/validate/${currentQ._id}`, {
+      const response = await fetch(`http://localhost:5000/api/questions/validate/${currentQ._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -248,6 +250,16 @@ function Questions() {
     setAnsweredQuestions(new Set());
     setShowExplanation(false);
     toast.success('Starting fresh! 🚀');
+  };
+
+  const handleQuickJump = (index) => {
+    setCurrentIndex(index);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setShowExplanation(false);
+    setShowAnswer(false);
+    setShowQuickJump(false);
+    setShowMobileMenu(false);
   };
 
   const calculateAccuracy = () => {
@@ -360,10 +372,29 @@ function Questions() {
 
           {/* Mobile Menu */}
           {showMobileMenu && (
-            <div className="absolute top-full left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 space-y-3 animate-slideDown">
+            <div className="absolute top-full left-0 right-0 bg-gray-900 border-t border-gray-800 p-4 space-y-3 animate-slideDown max-h-[80vh] overflow-y-auto">
+              
+              {/* Quick Jump Button */}
               <button
                 onClick={() => {
-                  setShowMobileStats(!showMobileStats);
+                  setShowQuickJump(true);
+                  setShowMobileMenu(false);
+                }}
+                className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-lg border border-purple-500/30"
+              >
+                <span className="flex items-center font-medium">
+                  <FaBars className="mr-2 text-purple-400" />
+                  Quick Jump to Question
+                </span>
+                <span className="text-xs bg-purple-500/30 px-2 py-1 rounded-full text-purple-400">
+                  {currentIndex + 1}/{questions.length}
+                </span>
+              </button>
+
+              {/* Stats Button */}
+              <button
+                onClick={() => {
+                  setShowMobileStats(true);
                   setShowMobileMenu(false);
                 }}
                 className="w-full flex items-center justify-between p-3 bg-gray-800 rounded-lg"
@@ -372,11 +403,12 @@ function Questions() {
                   <FaChartBar className="mr-2 text-indigo-400" />
                   Statistics
                 </span>
-                <span className="text-xs bg-indigo-500/20 px-2 py-1 rounded-full">
+                <span className="text-xs bg-indigo-500/20 px-2 py-1 rounded-full text-indigo-400">
                   {accuracy}%
                 </span>
               </button>
 
+              {/* Difficulty Filter */}
               <div className="space-y-2">
                 <label className="text-sm text-gray-400 flex items-center">
                   <FaFilter className="mr-2" />
@@ -394,12 +426,13 @@ function Questions() {
                 </select>
               </div>
 
+              {/* Restart Button */}
               <button
                 onClick={() => {
                   handleRestart();
                   setShowMobileMenu(false);
                 }}
-                className="w-full flex items-center justify-center space-x-2 p-3 bg-gray-800 rounded-lg"
+                className="w-full flex items-center justify-center space-x-2 p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition"
               >
                 <FaRedoAlt />
                 <span>Restart Quiz</span>
@@ -515,6 +548,86 @@ function Questions() {
         </div>
       )}
 
+      {/* Mobile Quick Jump Modal */}
+      {isMobile && showQuickJump && (
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-2xl w-full max-w-sm border border-gray-700 animate-fadeIn max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b border-gray-800">
+              <h3 className="font-semibold flex items-center">
+                <FaBars className="mr-2 text-purple-400" />
+                Jump to Question
+              </h3>
+              <button
+                onClick={() => setShowQuickJump(false)}
+                className="p-2 hover:bg-gray-800 rounded-lg transition"
+              >
+                <FaTimesIcon />
+              </button>
+            </div>
+            
+            <div className="p-4 overflow-y-auto">
+              {/* Progress Summary */}
+              <div className="mb-4 p-3 bg-gray-800/50 rounded-lg">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-400">Progress</span>
+                  <span className="text-indigo-400 font-medium">
+                    {answeredQuestions.size}/{questions.length}
+                  </span>
+                </div>
+                <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+                    style={{ width: `${(answeredQuestions.size / questions.length) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Question Grid */}
+              <div className="grid grid-cols-5 gap-2">
+                {questions.map((_, index) => {
+                  const isCurrent = index === currentIndex;
+                  const isAnswered_q = answeredQuestions.has(index);
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickJump(index)}
+                      className={`
+                        aspect-square rounded-lg font-medium text-sm transition-all
+                        ${isCurrent 
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white scale-105 shadow-lg' 
+                          : isAnswered_q
+                          ? 'bg-green-500/20 text-green-400 border border-green-500'
+                          : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                        }
+                      `}
+                    >
+                      {index + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Legend */}
+              <div className="mt-4 flex items-center justify-center space-x-4 text-xs">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full mr-1"></div>
+                  <span className="text-gray-400">Current</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-green-500/30 border border-green-500 rounded-full mr-1"></div>
+                  <span className="text-gray-400">Answered</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-gray-800 border border-gray-600 rounded-full mr-1"></div>
+                  <span className="text-gray-400">Pending</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Stats Modal */}
       {isMobile && showMobileStats && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -573,7 +686,7 @@ function Questions() {
               Total: {questions.length}
             </span>
             
-            {/* Streak Badge - Show on all screens */}
+            {/* Streak Badge */}
             {streak > 0 && (
               <span className="text-[10px] sm:text-xs bg-orange-500/20 px-2 sm:px-3 py-1 rounded-full text-orange-400 flex items-center animate-pulse">
                 <FaFire className="mr-1 text-xs" />
@@ -760,32 +873,42 @@ function Questions() {
             </button>
           </div>
 
-          {/* Question Navigator - Hide on very small screens */}
-          <div className="mt-6 sm:mt-8 hidden sm:block">
-            <p className="text-xs sm:text-sm text-gray-400 mb-2">Quick Jump:</p>
-            <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {questions.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentIndex(index);
-                    setSelectedOption(null);
-                    setIsAnswered(false);
-                    setShowExplanation(false);
-                  }}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs sm:text-sm font-medium transition ${
-                    index === currentIndex
-                      ? 'bg-indigo-600 text-white'
-                      : answeredQuestions.has(index)
-                      ? 'bg-green-500/20 text-green-400 border border-green-500'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+          {/* Desktop Quick Jump */}
+          {!isMobile && (
+            <div className="mt-6 sm:mt-8">
+              <p className="text-xs sm:text-sm text-gray-400 mb-2">Quick Jump:</p>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                {questions.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickJump(index)}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs sm:text-sm font-medium transition ${
+                      index === currentIndex
+                        ? 'bg-indigo-600 text-white'
+                        : answeredQuestions.has(index)
+                        ? 'bg-green-500/20 text-green-400 border border-green-500'
+                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Mobile Quick Jump Hint */}
+          {isMobile && (
+            <div className="mt-4 text-center">
+              <button
+                onClick={() => setShowQuickJump(true)}
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-purple-600/20 rounded-full border border-purple-500/30 text-purple-400 text-sm"
+              >
+                <FaBars />
+                <span>Jump to Question ({currentIndex + 1}/{questions.length})</span>
+              </button>
+            </div>
+          )}
 
           {/* Completion Message */}
           {currentIndex === questions.length - 1 && isAnswered && (
@@ -796,7 +919,7 @@ function Questions() {
                 Score: {score.correct}/{questions.length}
               </p>
               <p className="text-xs sm:text-sm text-gray-400 mb-4">
-                Accuracy: {accuracy}% • Best: {longestStreak}
+                Accuracy: {accuracy}% • Best Streak: {longestStreak}
               </p>
               <button
                 onClick={handleRestart}
