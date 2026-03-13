@@ -1077,15 +1077,15 @@ function Home() {
           </div>
         </footer>
 
-        {/* Scroll to Top */}
-        {showScrollTop && (
+        Scroll to Top
+        {/* {showScrollTop && (
           <button
             onClick={scrollToTop}
             className="fixed bottom-4 right-4 md:bottom-8 md:right-8 p-3 md:p-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full shadow-2xl hover:shadow-indigo-500/50 dark:from-indigo-400 dark:to-purple-400 transition-all duration-300"
           >
             <FaArrowUp className="text-white dark:text-gray-900 text-sm md:text-base" />
           </button>
-        )}
+        )} */}
         </div>
       </div>
 
