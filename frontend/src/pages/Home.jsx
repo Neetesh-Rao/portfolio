@@ -1077,7 +1077,7 @@ function Home() {
           </div>
         </footer>
 
-        Scroll to Top
+        {/* Scroll to Top */}
         {/* {showScrollTop && (
           <button
             onClick={scrollToTop}
