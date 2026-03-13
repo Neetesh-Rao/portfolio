@@ -639,7 +639,7 @@ function Home() {
 
         {/* Visitor Counter Badge */}
         {showVisitorBadge && (
-          <div className="fixed bottom-8 right-8 z-50">
+          <div className="hidden md:block fixed bottom-8 right-8 z-50">
             <div className={`relative group cursor-pointer transition-all duration-500 hover:scale-110`}>
               <div className={`absolute -inset-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-75 animate-pulse ${isAnimating ? 'animate-ping' : ''}`}></div>
               <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-lg opacity-50 animate-spin-slow"></div>
