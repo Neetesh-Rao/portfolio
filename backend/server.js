@@ -11,6 +11,7 @@ const axios = require("axios");
 const Blog = require("./models/blog");
 const Visitor=require("./models/Visitor")
 const DSAQuestion=require('./models/DSAQuestion');
+const AskQuestion=require("./models/AskQuestion")
 
 const app = express();
 
@@ -601,6 +602,64 @@ Keep it friendly, use emojis, and avoid technical jargon!`;
 
 }
 });
+
+//Ask Question API
+app.post("/api/ask",async(req,res)=>{
+  try{
+const {name,question}=req.body;
+const newQuestion=new AskQuestion({
+  name,question
+});
+await newQuestion.save();
+res.json({
+  sucess:true,
+  message:"Question submitted successfully"
+});
+  }catch(error){
+res.status(500).json({
+  success:false,
+  message:"Server error"
+});
+  }
+});
+//get all questions api
+app.get("/api/ask", async (req, res) => {
+  try {
+
+    const questions = await AskQuestion.find().sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: questions
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+
+  }
+});
+//reply api
+app.put("/api/answer/:id",async(req,res)=>{
+  try{
+const {answer}=req.body;
+const updated=await AskQuestion.findByIdAndUpdate(req.params.id,{answer},{new:true});
+res.json({
+  success:true,
+  data:updated
+})
+  }catch(error){
+ res.status(500).json({
+      success: false
+    });
+  }
+})
+
 mongoose
   .connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 15000,

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaBootstrap } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import AskModal from "./AskModal";
 
 import {
   FaInstagram,
@@ -27,12 +28,15 @@ import {
   FaTools,
   FaRocket,
   FaVideo,
-  FaEye
+  FaEye,
+  FaQuestionCircle,
+  FaRobot,
+  FaSpinner,
+  FaComments
 } from 'react-icons/fa';
-// Line 23 ke baad ye import add karo
 import { useNavigate } from 'react-router-dom';
-import { FaQuestionCircle ,FaRobot, FaSpinner} from 'react-icons/fa'; // ya koi bhi icon
-import { GiArtificialHive } from 'react-icons/gi'; // Naya import for AI icon
+import { GiArtificialHive, GiBrain, GiNetworkBars, GiCheckMark, GiPartyPopper } from 'react-icons/gi';
+import { HiMenu, HiX, HiChip, HiLightningBolt, HiSparkles } from 'react-icons/hi';
 import {
   SiMongodb,
   SiExpress,
@@ -49,10 +53,7 @@ import {
   SiVercel,
   SiWebrtc
 } from 'react-icons/si';
-import { HiMenu, HiX, HiChip, HiLightningBolt } from 'react-icons/hi';
 import { MdEmail, MdPhone, MdLocationOn } from 'react-icons/md';
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { GiBrain, GiNetworkBars, GiCheckMark, GiPartyPopper } from 'react-icons/gi';
 import { BiUser, BiTrendingUp } from 'react-icons/bi';
 import headerimage from '/profile.jpeg'
 import bitmax from '/ChatGPT Image Mar 2, 2026, 05_10_42 PM.png'
@@ -61,6 +62,7 @@ import resume from '/Resume_Neetesh.pdf'
 
 function Home() {
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [visitorCount, setVisitorCount] = useState(0);
@@ -68,7 +70,7 @@ function Home() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showVisitorBadge, setShowVisitorBadge] = useState(true);
 
-  // 🆕 NEW STATES FOR AI EXPLANATION
+  // AI states
   const [selectedProject, setSelectedProject] = useState(null);
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiExplanation, setAiExplanation] = useState('');
@@ -99,16 +101,14 @@ function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // REAL Visitor Tracking - NO DUMMY DATA
+  // REAL Visitor Tracking
   useEffect(() => {
     const trackVisitor = async () => {
       try {
-        // 🔥 APNA DEPLOYED URL YAHAN LAGAO
-        const BASE_URL = 'https://portfolio-csao.onrender.com'; // Change this to your deployed URL
+        const BASE_URL = 'https://portfolio-csao.onrender.com';
         
         const alreadyVisited = localStorage.getItem("visited");
 
-        // Pehle current count fetch karo
         const countRes = await fetch(`${BASE_URL}/api/visitor/count`);
         const countData = await countRes.json();
         
@@ -116,7 +116,6 @@ function Home() {
           setVisitorCount(countData.totalVisitors);
         }
 
-        // Agar first visit hai to track karo
         if (!alreadyVisited) {
           const trackRes = await fetch(
             `${BASE_URL}/api/visitor/track`,
@@ -124,7 +123,6 @@ function Home() {
           );
 
           const trackData = await trackRes.json();
-          console.log("Visitor data:", trackData);
           
           if (trackData.success) {
             setVisitorCount(trackData.totalVisitors);
@@ -135,7 +133,6 @@ function Home() {
         }
       } catch (err) {
         console.log("Visitor tracking failed:", err);
-        // ❌ KOI DUMMY DATA NAHI
       }
     };
 
@@ -228,28 +225,6 @@ function Home() {
     }
   ];
 
-  // Experience Data
-  const experiences = [
-    {
-      company: "Bitmax Technology, Sector 90",
-      position: "Full Stack Developer Intern",
-      duration: "2026 - Present",
-      description: "Working on full-stack web applications using MERN stack, developing REST APIs, integrating frontend with backend, and collaborating on live production projects."
-    },
-    {
-      company: "Tech Solutions Inc.",
-      position: "Senior MERN Stack Developer",
-      duration: "2022 - 2025",
-      description: "Led full-stack development for enterprise applications and managed scalable MERN-based solutions."
-    },
-    {
-      company: "Digital Innovations",
-      position: "Full Stack Developer",
-      duration: "2020 - 2022",
-      description: "Developed multiple production-ready web applications using React, Node.js, and MongoDB."
-    }
-  ];
-  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -336,17 +311,13 @@ function Home() {
       document.body.style.overflow = "hidden";
     }
 
-    
-
- 
-  
-
     return () => {
       document.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "auto";
     };
   }, [isResumeOpen]);
-    // 🆕 AI EXPLANATION FUNCTION
+
+  // AI EXPLANATION FUNCTION
   const getAIExplanation = async (project) => {
     try {
       setSelectedProject(project);
@@ -355,8 +326,6 @@ function Home() {
       setAiError('');
       setAiExplanation('');
 
-      // Extract repo name from GitHub URL
-      // Example: https://github.com/Neetesh-Rao/WandarLust -> Neetesh-Rao/WandarLust
       const repoPath = project.github.replace('https://github.com/', '');
       
       const response = await fetch(`https://portfolio-csao.onrender.com/api/explain-project`, {
@@ -381,7 +350,8 @@ function Home() {
       setAiLoading(false);
     }
   };
-   const closeAIModal = () => {
+  
+  const closeAIModal = () => {
     setShowAIModal(false);
     setSelectedProject(null);
     setAiExplanation('');
@@ -391,10 +361,15 @@ function Home() {
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false} />
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white
-                    dark:bg-gradient-to-br dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 dark:text-gray-900">
+      
+      {/* 🔥 MAIN CONTAINER WITH BLUR EFFECT - POORE PAGE PE LAGEGA 🔥 */}
+      <div className={`min-h-screen transition-all duration-700 ${
+        openModal ? 'blur-[4px] scale-[0.98] pointer-events-none' : ''
+      }`}>
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white
+                      dark:bg-gradient-to-br dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 dark:text-gray-900">
         
-        {/* Navigation - EXACTLY AS YOURS */}
+        {/* Navigation */}
         <nav className={`fixed w-full z-50 transition-all duration-500 ${activeSection !== 'home'
             ? 'bg-gray-900/95 backdrop-blur-lg shadow-2xl dark:bg-gray-100/95'
             : 'bg-transparent dark:bg-transparent'
@@ -432,20 +407,20 @@ function Home() {
 
                 {/* Admin & Blog Links */}
                 <div className="flex items-center space-x-2 ml-2">
-                   <button
-    onClick={() => navigate('/questions')}
-    className="relative group"
-    title="Practice Questions"
-  >
-    <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
-    <div className="relative flex items-center space-x-2 px-4 py-2.5 bg-gray-800/90 dark:bg-gray-200/90 rounded-xl border border-gray-700 dark:border-gray-300 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 dark:from-green-400/20 dark:to-emerald-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-      <FaQuestionCircle className="relative text-green-400 dark:text-green-500 group-hover:scale-110 transition-transform" size={16} />
-      <span className="relative text-sm font-medium text-gray-300 dark:text-gray-700 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-green-400 group-hover:to-emerald-400 group-hover:bg-clip-text">
-        Questions
-      </span>
-    </div>
-  </button>
+                  <button
+                    onClick={() => navigate('/questions')}
+                    className="relative group"
+                    title="Practice Questions"
+                  >
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+                    <div className="relative flex items-center space-x-2 px-4 py-2.5 bg-gray-800/90 dark:bg-gray-200/90 rounded-xl border border-gray-700 dark:border-gray-300 overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 dark:from-green-400/20 dark:to-emerald-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                      <FaQuestionCircle className="relative text-green-400 dark:text-green-500 group-hover:scale-110 transition-transform" size={16} />
+                      <span className="relative text-sm font-medium text-gray-300 dark:text-gray-700 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-green-400 group-hover:to-emerald-400 group-hover:bg-clip-text">
+                        Questions
+                      </span>
+                    </div>
+                  </button>
                   <Link
                     to="/admin"
                     className="relative group"
@@ -530,15 +505,15 @@ function Home() {
               {/* Mobile Admin & Blog Links */}
               <div className="px-4 py-2 space-y-2">
                 <button
-    onClick={() => {
-      navigate('/questions');
-      setIsMenuOpen(false);
-    }}
-    className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300 w-full text-left"
-  >
-    <FaQuestionCircle className="text-green-400" size={16} />
-    <span className="text-sm text-gray-300 dark:text-gray-700 font-medium">Practice Questions</span>
-  </button>
+                  onClick={() => {
+                    navigate('/questions');
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300 w-full text-left"
+                >
+                  <FaQuestionCircle className="text-green-400" size={16} />
+                  <span className="text-sm text-gray-300 dark:text-gray-700 font-medium">Practice Questions</span>
+                </button>
                 <Link
                   to="/admin"
                   className="flex items-center space-x-3 px-3 py-2 bg-gray-800/50 dark:bg-gray-200/50 rounded-xl border border-gray-700 dark:border-gray-300"
@@ -662,21 +637,16 @@ function Home() {
           </div>
         </section>
 
-        {/* 🎯 UNIQUE ANIMATED VISITOR COUNTER - FLOATING BADGE */}
+        {/* Visitor Counter Badge */}
         {showVisitorBadge && (
           <div className="fixed bottom-8 right-8 z-50">
-            {/* Main Container */}
             <div className={`relative group cursor-pointer transition-all duration-500 hover:scale-110`}>
-              {/* Animated Rings */}
               <div className={`absolute -inset-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-75 animate-pulse ${isAnimating ? 'animate-ping' : ''}`}></div>
               <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-lg opacity-50 animate-spin-slow"></div>
               
-              {/* Main Badge */}
               <div className="relative flex items-center space-x-3 px-5 py-3 bg-gray-900/95 dark:bg-gray-100/95 backdrop-blur-xl rounded-2xl border-2 border-transparent bg-gradient-to-r from-indigo-500 to-purple-500 shadow-2xl overflow-hidden">
-                {/* Background Animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 dark:from-indigo-400/20 dark:to-purple-400/20 animate-shimmer"></div>
                 
-                {/* Left Icon */}
                 <div className="relative">
                   <div className="absolute inset-0 bg-indigo-500 rounded-full blur-md animate-pulse"></div>
                   <div className="relative w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -687,7 +657,6 @@ function Home() {
                   </div>
                 </div>
 
-                {/* Count Display */}
                 <div className="relative">
                   <div className="flex items-baseline">
                     <span className="text-3xl font-black bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -703,13 +672,11 @@ function Home() {
                   </div>
                 </div>
 
-                {/* Trending Indicator */}
                 <div className="relative flex items-center justify-center w-8 h-8 bg-green-500/20 rounded-full">
                   <BiTrendingUp className="text-green-400 text-lg" />
                   <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                 </div>
 
-                {/* Sparkle Effects */}
                 {isAnimating && (
                   <>
                     <div className="absolute -top-2 -right-2">
@@ -722,7 +689,6 @@ function Home() {
                 )}
               </div>
 
-              {/* Tooltip */}
               <div className="absolute -top-12 right-0 px-3 py-2 bg-gray-900 dark:bg-gray-100 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap border border-indigo-500/30">
                 <p className="text-xs text-indigo-400 dark:text-indigo-500 font-medium">🌟 Real unique visitors</p>
                 <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1">Updated in real-time</p>
@@ -730,7 +696,6 @@ function Home() {
               </div>
             </div>
 
-            {/* Close Button */}
             <button
               onClick={() => setShowVisitorBadge(false)}
               className="absolute -top-2 -right-2 w-6 h-6 bg-gray-800 dark:bg-gray-200 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors duration-300"
@@ -825,7 +790,6 @@ function Home() {
 
         {/* Skills Section */}
         <section id="skills" className="py-16 md:py-24 bg-gray-900/50 dark:bg-gray-100/50 transition-colors duration-500 relative overflow-hidden">
-          {/* Skills content - exactly as yours */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-10 md:mb-16">
               <h2 className="text-3xl md:text-6xl font-bold mb-3 md:mb-4">
@@ -843,11 +807,9 @@ function Home() {
             <div className="space-y-8 md:space-y-12">
               {Object.entries(skills).map(([category, skillList]) => (
                 <div key={category} className="group">
-                  {/* Category Header */}
                   <div className="relative mb-6 md:mb-8">
                     <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition duration-500"></div>
                     <div className="relative flex items-center space-x-3 p-4 md:p-6 bg-gray-800/50 dark:bg-gray-200/50 backdrop-blur-sm rounded-xl border border-gray-700 dark:border-gray-300">
-                      {/* Category Icon */}
                       <div className="p-3 md:p-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl shadow-lg">
                         {category === 'frontend' && <FaReact className="text-white text-xl md:text-2xl" />}
                         {category === 'backend' && <FaNodeJs className="text-white text-xl md:text-2xl" />}
@@ -856,7 +818,6 @@ function Home() {
                         {category === 'tools' && <FaTools className="text-white text-xl md:text-2xl" />}
                       </div>
                       
-                      {/* Category Title */}
                       <div className="flex-1">
                         <h3 className="text-xl md:text-3xl font-bold capitalize flex items-center">
                           <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -869,47 +830,39 @@ function Home() {
                         </p>
                       </div>
                       
-                      {/* Skill Count Badge */}
                       <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold">
                         {skillList.length}
                       </div>
                     </div>
                   </div>
 
-                  {/* Skills Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                     {skillList.map((skill, index) => (
                       <div
                         key={index}
                         className="group/skill relative transform transition-all duration-500 hover:scale-105 hover:-translate-y-1"
                       >
-                        {/* Premium Card Design */}
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-0 group-hover/skill:opacity-50 transition duration-500"></div>
                         
                         <div className="relative h-full bg-gray-800/80 dark:bg-gray-200/80 backdrop-blur-sm rounded-xl p-4 md:p-5 border border-gray-700 dark:border-gray-300 overflow-hidden">
-                          {/* Skill Icon */}
                           <div className="relative mb-3 flex justify-between items-start">
                             <div className="relative text-3xl md:text-4xl transform group-hover/skill:scale-110 transition-all duration-300">
                               {skill.icon}
                             </div>
                             
-                            {/* Level Badge */}
                             <div className="px-2 py-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg text-xs font-bold text-white">
                               {skill.level}%
                             </div>
                           </div>
                           
-                          {/* Skill Name */}
                           <h4 className="text-base md:text-lg font-bold mb-2 group-hover/skill:text-indigo-400 transition-colors">
                             {skill.name}
                           </h4>
                           
-                          {/* Skill Description */}
                           <p className="text-xs text-gray-400 dark:text-gray-600 mb-3 line-clamp-2">
                             {skill.description}
                           </p>
                           
-                          {/* Progress Bar */}
                           <div className="relative pt-1">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-xs font-semibold text-gray-400 dark:text-gray-600">Proficiency</span>
@@ -930,7 +883,6 @@ function Home() {
               ))}
             </div>
 
-            {/* Additional Skills Badge */}
             <div className="mt-12 text-center">
               <div className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-800/50 dark:bg-gray-200/50 backdrop-blur-sm rounded-full border border-gray-700 dark:border-gray-300">
                 <HiLightningBolt className="text-yellow-400 animate-pulse" size={20} />
@@ -967,17 +919,17 @@ function Home() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent dark:from-gray-200"></div>
                     </div>
-                     {/* 🆕 AI BADGE ON IMAGE */}
-              <div className="absolute top-2 right-2">
-                <button
-                  onClick={() => getAIExplanation(project)}
-                  className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg hover:scale-105 transition-transform"
-                  title="Explain this project with AI"
-                >
-                  <GiArtificialHive className="text-white" size={14} />
-                  <span className="text-white">AI Explain</span>
-                </button>
-              </div>
+                    
+                    <div className="absolute top-2 right-2">
+                      <button
+                        onClick={() => getAIExplanation(project)}
+                        className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg hover:scale-105 transition-transform"
+                        title="Explain this project with AI"
+                      >
+                        <GiArtificialHive className="text-white" size={14} />
+                        <span className="text-white">AI Explain</span>
+                      </button>
+                    </div>
 
                     <div className="p-4 md:p-6">
                       <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2 group-hover:text-indigo-400 transition-colors">
@@ -1036,7 +988,6 @@ function Home() {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6 md:gap-12">
-              {/* Contact Info */}
               <div className="space-y-4 md:space-y-6">
                 <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300">
                   <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Let's Connect</h3>
@@ -1068,7 +1019,6 @@ function Home() {
                 </div>
               </div>
 
-              {/* Contact Form */}
               <div className="bg-gray-800/50 dark:bg-gray-200/50 p-4 md:p-8 rounded-xl border border-gray-700 dark:border-gray-300">
                 <h3 className="text-lg md:text-2xl font-bold mb-4 md:mb-6 text-white dark:text-gray-900">Send Message</h3>
                 <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
@@ -1136,195 +1086,233 @@ function Home() {
             <FaArrowUp className="text-white dark:text-gray-900 text-sm md:text-base" />
           </button>
         )}
+        </div>
       </div>
 
-        {/* 🆕 AI EXPLANATION MODAL */}
-      {/* 🆕 AI EXPLANATION MODAL - FIXED VERSION */}
-{showAIModal && (
-  <>
-    {/* Backdrop */}
-    <div
-      onClick={closeAIModal}
-      className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-300"
-    />
+      {/* 🔥 ASK BUTTON - GOL CIRCLE, SCREEN KE NEECHE 🔥 */}
+      {/* 🔥 ASK BUTTON - GOL CIRCLE, SCREEN KE NEECHE - MOBILE MEIN RIGHT SIDE PE 🔥 */}
+{/* 🔥 ASK BUTTON - GOL CIRCLE - MOBILE MEIN RIGHT, DESKTOP MEIN LEFT 🔥 */}
+<button
+  onClick={() => setOpenModal(true)}
+  className="fixed bottom-8 z-50 group
+             /* Mobile screens - right side */
+             right-4 left-auto
+             /* Small screens - right side */
+             sm:right-6 sm:left-auto
+             /* Medium screens and up - left side */
+             md:left-8 md:right-auto"
+  aria-label="Ask Neetesh"
+>
+  {/* Animated Rings */}
+  <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-75 group-hover:opacity-100 animate-pulse group-hover:animate-none transition-all duration-300"></div>
+  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-lg opacity-50 animate-spin-slow group-hover:opacity-75"></div>
+  
+  {/* Main Circle Button */}
+  <div className="relative w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300 cursor-pointer border-2 border-white/20">
+    {/* Inner glow */}
+    <div className="absolute inset-0 bg-white/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
     
-    {/* Modal Container - WITH FLEX COLUMN LAYOUT */}
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <div className="relative w-full max-w-3xl max-h-[90vh] bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-purple-500/30 shadow-2xl animate-[fadeInScale_.3s_ease-out] overflow-hidden flex flex-col">
-        
-        {/* Header - Fixed at top */}
-        <div className="flex-shrink-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gradient-to-r from-purple-600/30 to-pink-600/30">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-lg">
-              <GiArtificialHive className="text-white text-lg sm:text-xl" />
-            </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-white flex items-center">
-                AI Project Analysis
-                <span className="ml-2 text-[10px] sm:text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-300">
-                  Beta
-                </span>
-              </h2>
-              <p className="text-xs sm:text-sm text-gray-400 flex items-center">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-2"></span>
-                {selectedProject?.title}
-              </p>
+    {/* Icon */}
+    <FaComments className="text-white text-xl md:text-2xl group-hover:rotate-12 transition-transform duration-300" />
+    
+    {/* Sparkle effect */}
+    <HiSparkles className="absolute -top-1 -right-1 text-yellow-300 text-xs animate-ping" />
+    
+    {/* Pulse dot */}
+    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse border-2 border-white"></span>
+  </div>
+  
+  {/* Tooltip on hover - desktop only */}
+  <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-100 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap border border-indigo-500/30 hidden md:block">
+    <p className="text-xs text-white dark:text-gray-900 font-medium flex items-center">
+      <FaQuestionCircle className="mr-1 text-indigo-400" />
+      Ask Neetesh
+    </p>
+    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45 border-r border-b border-indigo-500/30"></div>
+  </div>
+</button>
+      {/* Ask Modal */}
+      <AskModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+      />
+
+      {/* AI EXPLANATION MODAL */}
+      {showAIModal && (
+        <>
+          <div
+            onClick={closeAIModal}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-opacity duration-300"
+          />
+          
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="relative w-full max-w-3xl max-h-[90vh] bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl border border-purple-500/30 shadow-2xl animate-[fadeInScale_.3s_ease-out] overflow-hidden flex flex-col">
+              
+              <div className="flex-shrink-0 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-700 bg-gradient-to-r from-purple-600/30 to-pink-600/30">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg shadow-lg">
+                    <GiArtificialHive className="text-white text-lg sm:text-xl" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-xl font-bold text-white flex items-center">
+                      AI Project Analysis
+                      <span className="ml-2 text-[10px] sm:text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-300">
+                        Beta
+                      </span>
+                    </h2>
+                    <p className="text-xs sm:text-sm text-gray-400 flex items-center">
+                      <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse mr-2"></span>
+                      {selectedProject?.title}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeAIModal}
+                  className="p-1.5 sm:p-2 hover:bg-gray-700 rounded-lg transition-colors group"
+                  title="Close"
+                >
+                  <FaTimes className="text-gray-400 group-hover:text-white text-sm sm:text-base" size={16} />
+                </button>
+              </div>
+
+              <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+                {aiLoading ? (
+                  <div className="flex flex-col items-center justify-center py-8 sm:py-12">
+                    <div className="relative">
+                      <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-2 border-b-2 border-purple-500"></div>
+                      <GiArtificialHive className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-purple-400 text-xl sm:text-2xl" />
+                    </div>
+                    <p className="text-gray-400 mt-4 text-sm sm:text-base">🤖 AI is thinking...</p>
+                    <p className="text-xs text-gray-500 mt-2">Analyzing GitHub repository</p>
+                  </div>
+                ) : aiError ? (
+                  <div className="text-center py-8 sm:py-12">
+                    <div className="text-4xl sm:text-6xl mb-4">😕</div>
+                    <h3 className="text-lg sm:text-xl text-red-400 font-semibold mb-2">Oops! Something went wrong</h3>
+                    <p className="text-sm sm:text-base text-gray-400 mb-4 px-4">{aiError}</p>
+                    <button
+                      onClick={() => getAIExplanation(selectedProject)}
+                      className="px-4 sm:px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:shadow-lg transition text-sm sm:text-base"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
+                      <div className="flex items-center space-x-2 mb-3 sm:mb-4 border-b border-purple-500/20 pb-2 sm:pb-3">
+                        <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
+                          <FaRobot className="text-white text-sm sm:text-base" />
+                        </div>
+                        <span className="text-purple-400 font-semibold text-sm sm:text-base">AI Project Explanation</span>
+                      </div>
+                      
+                      <div className="text-gray-300 text-xs sm:text-sm leading-relaxed space-y-3">
+                        {aiExplanation.split('\n').map((line, i) => {
+                          if (line.includes('🎯') || line.includes('✨') || line.includes('🛠️') || 
+                              line.includes('💡') || line.includes('🌟') || line.includes('**')) {
+                            return (
+                              <h3 key={i} className="text-sm sm:text-base font-bold text-purple-400 mt-4 mb-2 flex items-center">
+                                {line.includes('🎯') && <span className="mr-2">🎯</span>}
+                                {line.includes('✨') && <span className="mr-2">✨</span>}
+                                {line.includes('🛠️') && <span className="mr-2">🛠️</span>}
+                                {line.includes('💡') && <span className="mr-2">💡</span>}
+                                {line.includes('🌟') && <span className="mr-2">🌟</span>}
+                                <span>{line.replace(/[🎯✨🛠️💡🌟*]/g, '').trim()}</span>
+                              </h3>
+                            );
+                          }
+                          else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                            return (
+                              <li key={i} className="ml-4 sm:ml-6 text-gray-300 list-disc text-xs sm:text-sm">
+                                {line.replace(/[•-]/, '').trim()}
+                              </li>
+                            );
+                          }
+                          else if (line.trim() !== '') {
+                            return <p key={i} className="mb-2 text-xs sm:text-sm">{line}</p>;
+                          }
+                          return null;
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="p-2 bg-gray-700 rounded-lg">
+                            <FaGithub className="text-gray-400 text-base sm:text-xl" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-500">Repository</p>
+                            <a 
+                              href={selectedProject?.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
+                            >
+                              {selectedProject?.github.split('/').slice(-2).join('/')}
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="p-2 bg-gray-700 rounded-lg">
+                            <FaExternalLinkAlt className="text-gray-400 text-base sm:text-xl" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-gray-500">Live Demo</p>
+                            <a 
+                              href={selectedProject?.live}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
+                            >
+                              {selectedProject?.live.replace('https://', '').substring(0, 25)}...
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
+                      <p className="text-xs sm:text-sm text-gray-400 mb-2 flex items-center">
+                        <span className="mr-2">🛠️</span> Technologies Used:
+                      </p>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                        {selectedProject?.tech.map((tech, i) => (
+                          <span 
+                            key={i} 
+                            className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full text-[10px] sm:text-xs text-purple-400 border border-purple-500/30 shadow-lg"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
+                      <p className="text-xs sm:text-sm text-gray-400 mb-1">📝 Description:</p>
+                      <p className="text-xs sm:text-sm text-gray-300">{selectedProject?.description}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-shrink-0 flex justify-end px-6 py-4 border-t border-gray-700 bg-gray-900/50">
+                <button
+                  onClick={closeAIModal}
+                  className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-          <button
-            onClick={closeAIModal}
-            className="p-1.5 sm:p-2 hover:bg-gray-700 rounded-lg transition-colors group"
-            title="Close"
-          >
-            <FaTimes className="text-gray-400 group-hover:text-white text-sm sm:text-base" size={16} />
-          </button>
-        </div>
-
-        {/* Content - Scrollable area */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
-          {aiLoading ? (
-            <div className="flex flex-col items-center justify-center py-8 sm:py-12">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-t-2 border-b-2 border-purple-500"></div>
-                <GiArtificialHive className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-purple-400 text-xl sm:text-2xl" />
-              </div>
-              <p className="text-gray-400 mt-4 text-sm sm:text-base">🤖 AI is thinking...</p>
-              <p className="text-xs text-gray-500 mt-2">Analyzing GitHub repository</p>
-            </div>
-          ) : aiError ? (
-            <div className="text-center py-8 sm:py-12">
-              <div className="text-4xl sm:text-6xl mb-4">😕</div>
-              <h3 className="text-lg sm:text-xl text-red-400 font-semibold mb-2">Oops! Something went wrong</h3>
-              <p className="text-sm sm:text-base text-gray-400 mb-4 px-4">{aiError}</p>
-              <button
-                onClick={() => getAIExplanation(selectedProject)}
-                className="px-4 sm:px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:shadow-lg transition text-sm sm:text-base"
-              >
-                Try Again
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4 sm:space-y-6">
-              {/* AI Explanation */}
-              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl p-4 sm:p-6 border border-purple-500/30 shadow-xl">
-                <div className="flex items-center space-x-2 mb-3 sm:mb-4 border-b border-purple-500/20 pb-2 sm:pb-3">
-                  <div className="p-1.5 sm:p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
-                    <FaRobot className="text-white text-sm sm:text-base" />
-                  </div>
-                  <span className="text-purple-400 font-semibold text-sm sm:text-base">AI Project Explanation</span>
-                </div>
-                
-                {/* Formatted Explanation */}
-                <div className="text-gray-300 text-xs sm:text-sm leading-relaxed space-y-3">
-                  {aiExplanation.split('\n').map((line, i) => {
-                    if (line.includes('🎯') || line.includes('✨') || line.includes('🛠️') || 
-                        line.includes('💡') || line.includes('🌟') || line.includes('**')) {
-                      return (
-                        <h3 key={i} className="text-sm sm:text-base font-bold text-purple-400 mt-4 mb-2 flex items-center">
-                          {line.includes('🎯') && <span className="mr-2">🎯</span>}
-                          {line.includes('✨') && <span className="mr-2">✨</span>}
-                          {line.includes('🛠️') && <span className="mr-2">🛠️</span>}
-                          {line.includes('💡') && <span className="mr-2">💡</span>}
-                          {line.includes('🌟') && <span className="mr-2">🌟</span>}
-                          <span>{line.replace(/[🎯✨🛠️💡🌟*]/g, '').trim()}</span>
-                        </h3>
-                      );
-                    }
-                    else if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-                      return (
-                        <li key={i} className="ml-4 sm:ml-6 text-gray-300 list-disc text-xs sm:text-sm">
-                          {line.replace(/[•-]/, '').trim()}
-                        </li>
-                      );
-                    }
-                    else if (line.trim() !== '') {
-                      return <p key={i} className="mb-2 text-xs sm:text-sm">{line}</p>;
-                    }
-                    return null;
-                  })}
-                </div>
-              </div>
-
-              {/* Project Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
-                  <div className="flex items-center space-x-2 sm:space-x-3">
-                    <div className="p-2 bg-gray-700 rounded-lg">
-                      <FaGithub className="text-gray-400 text-base sm:text-xl" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500">Repository</p>
-                      <a 
-                        href={selectedProject?.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
-                      >
-                        {selectedProject?.github.split('/').slice(-2).join('/')}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-800/50 rounded-xl p-3 sm:p-4 border border-gray-700 hover:border-purple-500/50 transition-all">
-                  <div className="flex items-center space-x-2 sm:space-x-3">
-                    <div className="p-2 bg-gray-700 rounded-lg">
-                      <FaExternalLinkAlt className="text-gray-400 text-base sm:text-xl" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-gray-500">Live Demo</p>
-                      <a 
-                        href={selectedProject?.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs sm:text-sm text-purple-400 hover:underline truncate block"
-                      >
-                        {selectedProject?.live.replace('https://', '').substring(0, 25)}...
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tech Stack Section */}
-              <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
-                <p className="text-xs sm:text-sm text-gray-400 mb-2 flex items-center">
-                  <span className="mr-2">🛠️</span> Technologies Used:
-                </p>
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {selectedProject?.tech.map((tech, i) => (
-                    <span 
-                      key={i} 
-                      className="px-2 sm:px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full text-[10px] sm:text-xs text-purple-400 border border-purple-500/30 shadow-lg"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Project Description */}
-              <div className="bg-gray-800/30 rounded-xl p-3 sm:p-4 border border-gray-700">
-                <p className="text-xs sm:text-sm text-gray-400 mb-1">📝 Description:</p>
-                <p className="text-xs sm:text-sm text-gray-300">{selectedProject?.description}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer - Fixed at bottom */}
-        <div className="flex-shrink-0 flex justify-end px-6 py-4 border-t border-gray-700 bg-gray-900/50">
-          <button
-            onClick={closeAIModal}
-            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  </>
-)}
+        </>
+      )}
 
       {/* Resume Modal */}
       {isResumeOpen && (
@@ -1335,7 +1323,7 @@ function Home() {
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
             <div className="relative w-full md:w-4/5 lg:w-3/5 max-h-[92vh] bg-white/10 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-2xl md:rounded-3xl shadow-2xl animate-[fadeInScale_.3s_ease-out]">
-              <div className="flex justify-between items-center px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
+                            <div className="flex justify-between items-center px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
                 <h2 className="text-sm md:text-xl font-semibold text-white dark:text-gray-100">Resume Preview</h2>
                 <button
                   onClick={closeResume}
@@ -1370,7 +1358,6 @@ function Home() {
           </div>
         </>
       )}
-      
 
       {/* Animation Keyframes */}
       <style>{`
@@ -1391,6 +1378,28 @@ function Home() {
           100% { transform: translateX(100%); }
         }
         
+        @keyframes fadeInScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
         .animate-blob {
           animation: blob 7s infinite;
         }
@@ -1409,27 +1418,6 @@ function Home() {
         
         .animation-delay-4000 {
           animation-delay: 4s;
-        }
-        
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-           @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
         }
       `}</style>
     </>
