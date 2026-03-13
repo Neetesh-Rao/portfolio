@@ -18,7 +18,10 @@ const app = express();
 // Force reliable DNS for MongoDB SRV
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-app.use(cors());
+app.use(cors({
+  origin: "https://neeteshportfolio.vercel.app"
+}));
+
 app.use(express.json());
 
 /* ===============================
@@ -658,7 +661,7 @@ res.json({
       success: false
     });
   }
-})
+});
 
 mongoose
   .connect(process.env.MONGO_URI, {
